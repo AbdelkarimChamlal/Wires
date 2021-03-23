@@ -149,10 +149,6 @@ public class RowHandler {
 
                     if(matchingRow.get(0).getCell(key).getNumericCellValue() != matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getNumericCellValue()){
                         modified = true;
-//                        System.out.println("----------------------------------------------------------------");
-//                        System.out.println(matchingRow.get(0).getCell(key).getNumericCellValue() + " :Numerics: " + matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getNumericCellValue());
-//                        System.out.println(key + " :index: " + matchingValuesPositions.get(key)  + " :id: " + matchingRow.get(0).getCell(16).getStringCellValue());
-//                        System.out.println("----------------------------------------------------------------");
                         break;
                     }
 
@@ -161,10 +157,6 @@ public class RowHandler {
                     matchingRow.get(1).getCell(matchingValuesPositions.get(key)).setCellType(CellType.STRING);
                     if(!matchingRow.get(0).getCell(key).getStringCellValue().equalsIgnoreCase(matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getStringCellValue())){
                         modified = true;
-//                        System.out.println("----------------------------------------------------------------");
-//                        System.out.println(matchingRow.get(0).getCell(key).getStringCellValue() + " :Strings: " + matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getStringCellValue());
-//                        System.out.println(key + " :index: " + matchingValuesPositions.get(key) + " :id: " + matchingRow.get(0).getCell(16).getStringCellValue());
-//                        System.out.println("----------------------------------------------------------------");
                         break;
                     }
                 }
@@ -192,10 +184,6 @@ public class RowHandler {
 
                     if(matchingRow.get(0).getCell(key).getNumericCellValue() != matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getNumericCellValue()){
                         modified = true;
-//                        System.out.println("----------------------------------------------------------------");
-//                        System.out.println(matchingRow.get(0).getCell(key).getNumericCellValue() + " :Numerics: " + matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getNumericCellValue());
-//                        System.out.println(key + " :index: " + matchingValuesPositions.get(key)  + " :id: " + matchingRow.get(0).getCell(16).getStringCellValue());
-//                        System.out.println("----------------------------------------------------------------");
                         break;
                     }
 
@@ -204,10 +192,6 @@ public class RowHandler {
                     matchingRow.get(1).getCell(matchingValuesPositions.get(key)).setCellType(CellType.STRING);
                     if(!matchingRow.get(0).getCell(key).getStringCellValue().equalsIgnoreCase(matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getStringCellValue())){
                         modified = true;
-//                        System.out.println("----------------------------------------------------------------");
-//                        System.out.println(matchingRow.get(0).getCell(key).getStringCellValue() + " :Strings: " + matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getStringCellValue());
-//                        System.out.println(key + " :index: " + matchingValuesPositions.get(key) + " :id: " + matchingRow.get(0).getCell(16).getStringCellValue());
-//                        System.out.println("----------------------------------------------------------------");
                         break;
                     }
                 }

@@ -2,7 +2,7 @@ package models;
 
 import org.apache.poi.ss.usermodel.Row;
 
-public class RowReport {
+public class FinalRow {
     Row row;
     String statue;
 
@@ -22,12 +22,12 @@ public class RowReport {
         this.statue = statue;
     }
 
-    public RowReport(Row row, String statue) {
+    public FinalRow(Row row, String statue) {
         this.row = row;
         this.statue = statue;
     }
 
-    public RowReport(){
+    public FinalRow(){
 
     }
 }

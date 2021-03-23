@@ -3,9 +3,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import utils.HeaderGenerator;
+import utils.OutputGenerator;
 import utils.RowHandler;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,7 @@ public class App {
 
     static String oldVersionPath = "/max.xlsx";
     static String newVersionPath = "/min.xlsx";
+    static String outputPath     = "C:\\Users\\Abdel\\OneDrive\\Desktop\\yazaki\\xlsx git\\src\\main\\resources\\changes.xlsx";
 
     static int oldVersionUniqueKey = 6;
     static int newVersionUniqueKey = 4;
@@ -125,6 +129,60 @@ public class App {
 
         //get modified rows
         List<List<Row>> modifiedRows = RowHandler.getModifiedRows(matchingRows,matchingValuesPositions);
-        System.out.println(" modified rows "+modifiedRows.size());
+        System.out.println("modified rows "+modifiedRows.size());
+
+        //now its time to start collecting all data together and form it into a new sheet with all changes
+
+        //create new workBook
+        Workbook outputBook = new XSSFWorkbook();
+
+        //create the output sheet and name it tickets
+        Sheet outputSheet = outputBook.createSheet("changes");
+
+        OutputGenerator.createHeader(allValues,outputSheet);
+
+        int totalRowsInOutput = newVersionNoDuplicatedRows.size() + deletedRows.size();
+
+        System.out.println(totalRowsInOutput);
+        for(int i = 1; i<= totalRowsInOutput ; i++){
+            //start with deleted ones
+            if(i<=deletedRows.size()){
+                OutputGenerator.updateRow(allValues,oldVersionHeaderValues,outputSheet,deletedRows.get(i-1),"DELETED",i);
+            }else
+            //added rows
+            if(i<=deletedRows.size()+addedRow.size()){
+                OutputGenerator.updateRow(allValues,newVersionHeaderValues,outputSheet,addedRow.get(i-deletedRows.size()-1),"ADDED",i);
+            }else
+            //add non modified rows
+            if(i<=deletedRows.size() + addedRow.size() + nonModifiedRows.size()){
+                Row outputRow = OutputGenerator.createFinalRow(allValues,outputSheet,i);
+                OutputGenerator.updateRowForMatching(outputRow,allValues,oldVersionHeaderValues,nonModifiedRows.get(i-deletedRows.size()-addedRow.size()-1).get(0),"NOT MODIFIED");
+                OutputGenerator.updateRowForMatching(outputRow,allValues,newVersionHeaderValues,nonModifiedRows.get(i-deletedRows.size()-addedRow.size()-1).get(1),"NOT MODIFIED");
+            }else
+            //add modified rows
+            if(i<=deletedRows.size() + addedRow.size() + nonModifiedRows.size()+modifiedRows.size()){
+                Row outputRow = OutputGenerator.createFinalRow(allValues,outputSheet,i);
+                OutputGenerator.updateRowForMatching(outputRow,allValues,oldVersionHeaderValues,modifiedRows.get(i-deletedRows.size()-addedRow.size()-nonModifiedRows.size()-1).get(0),"MODIFIED");
+                OutputGenerator.updateRowForMatching(outputRow,allValues,newVersionHeaderValues,modifiedRows.get(i-deletedRows.size()-addedRow.size()-nonModifiedRows.size()-1).get(1),"MODIFIED");
+            }
+        }
+
+
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(outputPath);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            outputBook.write(outputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
