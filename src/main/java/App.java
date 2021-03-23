@@ -7,8 +7,6 @@ import utils.OutputGenerator;
 import utils.RowHandler;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -20,12 +18,12 @@ import java.util.Map;
 //TODO: duplicated rows or duplicated rows with different values....
 public class App {
 
-    static String oldVersionPath = "/max.xlsx";
-    static String newVersionPath = "/min.xlsx";
+    static String oldVersionPath = "/oldVersion.xlsx";
+    static String newVersionPath = "/newVersion.xlsx";
     static String outputPath     = "C:\\Users\\Abdel\\OneDrive\\Desktop\\yazaki\\xlsx git\\src\\main\\resources\\changes.xlsx";
 
-    static int oldVersionUniqueKey = 6;
-    static int newVersionUniqueKey = 4;
+    static int oldVersionUniqueKey = 16;
+    static int newVersionUniqueKey = 16;
 
 
 
@@ -143,7 +141,6 @@ public class App {
 
         int totalRowsInOutput = newVersionNoDuplicatedRows.size() + deletedRows.size();
 
-        System.out.println(totalRowsInOutput);
         for(int i = 1; i<= totalRowsInOutput ; i++){
             //start with deleted ones
             if(i<=deletedRows.size()){
@@ -167,7 +164,6 @@ public class App {
             }
         }
 
-
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(outputPath);
@@ -180,6 +176,7 @@ public class App {
             e.printStackTrace();
         }
         try {
+            assert outputStream != null;
             outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();

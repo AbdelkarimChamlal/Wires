@@ -204,4 +204,31 @@ public class RowHandler {
 
         return modifiedRows;
     }
+
+    public static List<String> getDifferentValues(List<Row> allRows,int key){
+        List<String> differentKeys = new ArrayList<>();
+
+        for(Row row : allRows){
+            String value = row.getCell(key).getStringCellValue();
+            if(!differentKeys.contains(value)){
+                differentKeys.add(value);
+            }
+        }
+
+        return differentKeys;
+    }
+
+    public static List<List<Row>> getRowsWithSameKey(List<Row> allRows,List<String> differentKeys,int uniqueKey){
+        List<List<Row>> rows = new ArrayList<>();
+        for(String key : differentKeys){
+            List<Row> rowsWithSameKey = new ArrayList<>();
+            for(Row row : allRows){
+                if(row.getCell(uniqueKey).getStringCellValue().equalsIgnoreCase(key)){
+                    rowsWithSameKey.add(row);
+                }
+            }
+            rows.add(rowsWithSameKey);
+        }
+        return rows;
+    }
 }
