@@ -124,6 +124,7 @@ public class AddDoubles {
             for(Row crimpingRow:crimpingGroup){
 
                 //if this boi got some double in it
+                if(crimpingRow.getCell(wireTypePositionInCrimping)!=null)
                 if(crimpingRow.getCell(wireTypePositionInCrimping).getStringCellValue().equalsIgnoreCase("double")){
 
                     //get them bois from the max list with same wire costumed ids
