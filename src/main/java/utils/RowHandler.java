@@ -134,7 +134,6 @@ public class RowHandler {
         return matchingRows;
     }
 
-
     public static List<List<Row>> getNonModifiedRows(List<List<Row>> matchingRows, Map<Integer,Integer> matchingValuesPositions ){
         List<List<Row>> nonModifiedRows = new ArrayList<>();
         Set keySet = matchingValuesPositions.keySet();
@@ -144,7 +143,6 @@ public class RowHandler {
 
             for (Object o : keySet) {
                 int key = (Integer) o;
-
                 if(matchingRow.get(0).getCell(key).getCellType()== CellType.NUMERIC && matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getCellType() == CellType.NUMERIC){
 
                     if(matchingRow.get(0).getCell(key).getNumericCellValue() != matchingRow.get(1).getCell(matchingValuesPositions.get(key)).getNumericCellValue()){

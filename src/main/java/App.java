@@ -18,12 +18,12 @@ import java.util.Map;
 //TODO: duplicated rows or duplicated rows with different values....
 public class App {
 
-    static String oldVersionPath = "/oldVersion.xlsx";
-    static String newVersionPath = "/newVersion.xlsx";
-    static String outputPath     = "C:\\Users\\Abdel\\OneDrive\\Desktop\\yazaki\\xlsx git\\src\\main\\resources\\changes.xlsx";
+    static String oldVersionPath = "/max.xlsx";
+    static String newVersionPath = "/new max.xlsx";
+    static String outputPath     = "C:\\Users\\Abdel\\OneDrive\\Desktop\\yazaki\\xlsx git\\src\\main\\resources\\max diffs.xlsx";
 
-    static int oldVersionUniqueKey = 16;
-    static int newVersionUniqueKey = 16;
+    static int oldVersionUniqueKey = 5;
+    static int newVersionUniqueKey = 5;
 
 
 
