@@ -1,10 +1,10 @@
-import org.apache.commons.collections4.map.HashedMap;
+package v1;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import utils.DoubleGenerator;
-import utils.HeaderGenerator;
-import utils.OutputGenerator;
-import utils.RowHandler;
+import v1.utils.DoubleGenerator;
+import v1.utils.HeaderGenerator;
+import v1.utils.RowHandler;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -42,8 +42,16 @@ public class AddDoubles {
     static int maxModelPosition = 0;
 
     static int crimpingConnectorPosition = 2;
-    static int maxConnectorPositionAtSource =19;
-    static int maxConnectorPositionAtDestination=39;
+    static int maxConnectorPositionAtSource = 19;
+    static int maxConnectorPositionAtDestination = 39;
+
+    static int cavityPositionInCrimping = 1;
+    static int cavityPositionInMaxAtSource = 25;
+    static int cavityPositionInMaxAtDestination = 44;
+
+    static int terminalPositionInCrimping = 15;
+    static int terminalPositionInMaxAtSource = 26;
+    static int terminalPositionInMaxAtDestination = 45;
 
 
 
@@ -133,8 +141,9 @@ public class AddDoubles {
 
                     String crimpingConnectors = crimpingRow.getCell(crimpingConnectorPosition).getStringCellValue();
                     String crimpingModels = crimpingRow.getCell(crimpingModelsPosition).getStringCellValue();
+                    String crimpingCavity = crimpingRow.getCell(cavityPositionInCrimping).getStringCellValue();
 
-                    //check if the max bois match the crimping boi in models
+                    //check if the max bois match the crimping boi in v1.models
                     //and add them to the matching bois list
                     for(Row maxRow:maxGroup){
                         if(crimpingModels.contains(maxRow.getCell(maxModelPosition).getStringCellValue())){
@@ -145,7 +154,7 @@ public class AddDoubles {
                     List<Row> matchingModelsAndConnectors = new ArrayList<>();
 
                     //now check if the matching model bois match with crimping boi on level of the connector too
-                    //and add them to the matching models and connectors
+                    //and add them to the matching v1.models and connectors
                     for(Row matchingModel:matchingModels){
 
                         String maxConnectorAtSource = matchingModel.getCell(maxConnectorPositionAtSource).getStringCellValue();
@@ -156,21 +165,33 @@ public class AddDoubles {
                         }
                     }
 
+                    List<Row> matchingModelsAndConnectorsAndCavity = new ArrayList<>();
+
+                    for(Row matching:matchingModelsAndConnectors){
+
+                        String maxCavityAtSource = matching.getCell(cavityPositionInMaxAtSource).getStringCellValue();
+                        String maxCavityAtDestination = matching.getCell(cavityPositionInMaxAtDestination).getStringCellValue();
+
+                        if(crimpingCavity.contains(maxCavityAtDestination) || crimpingCavity.contains(maxCavityAtSource) || maxCavityAtSource.contains(crimpingCavity) || maxCavityAtDestination.contains(crimpingCavity)){
+                            matchingModelsAndConnectorsAndCavity.add(matching);
+                        }
+                    }
+
                     boolean hasDouble = false;
 
-                    //now them matching in both models and connectors bois are some very bad boys
+                    //now them matching in both v1.models and connectors bois are some very bad boys
                     //we need to see if they are doubled or not
                     //if they are double then fine
                     //if not the hasDouble flag will stay false
                     //and this bois ladies and gentlemen needs to be added to the added rows and but them back to the max list
 
-                    for(Row matchingModelsAndConnectorsRow : matchingModelsAndConnectors){
+                    for(Row matching : matchingModelsAndConnectorsAndCavity){
 
-                        String wireTypeAtSource = matchingModelsAndConnectorsRow.getCell(wireTypePositionInMaxAtSource).getStringCellValue();
-                        String connectorAtSource = matchingModelsAndConnectorsRow.getCell(maxConnectorPositionAtSource).getStringCellValue();
+                        String wireTypeAtSource = matching.getCell(wireTypePositionInMaxAtSource).getStringCellValue();
+                        String connectorAtSource = matching.getCell(maxConnectorPositionAtSource).getStringCellValue();
 
-                        String wireTypeAtDestination = matchingModelsAndConnectorsRow.getCell(wireTypePositionInMaxAtDestination).getStringCellValue();
-                        String connectorAtDestination = matchingModelsAndConnectorsRow.getCell(wireTypePositionInMaxAtDestination).getStringCellValue();
+                        String wireTypeAtDestination = matching.getCell(wireTypePositionInMaxAtDestination).getStringCellValue();
+                        String connectorAtDestination = matching.getCell(wireTypePositionInMaxAtDestination).getStringCellValue();
 
                         if(wireTypeAtSource.equalsIgnoreCase("double") && crimpingConnectors.contains(connectorAtSource)){
                             hasDouble=true;
@@ -194,42 +215,116 @@ public class AddDoubles {
                     // you may ask why check the bois size ? the flag would stay false in case of no matching was there to begin with
                     // there for we need to check
 
-                    if(!hasDouble && matchingModelsAndConnectors.size()>0){
+                    if(!hasDouble && matchingModelsAndConnectorsAndCavity.size()>0){
                         //there should be only one matching but in case of duplicated values i dunno it may cause some problems?
                         for(Row takeActionRow:matchingModelsAndConnectors){
+
+                            //new i should check if i should add or just change values
+                            boolean add = false;
+
+                            for(Row row:crimpingGroup){
+
+                                boolean cavityAtSource = RowHandler.checkForSameValues(takeActionRow,row,cavityPositionInMaxAtSource,cavityPositionInCrimping);
+                                boolean cavityAtDestination = RowHandler.checkForSameValues(takeActionRow,row,cavityPositionInMaxAtDestination,cavityPositionInCrimping);
+
+                                boolean connectorAtSource = RowHandler.checkForSameValues(takeActionRow,row,maxConnectorPositionAtSource,crimpingConnectorPosition);
+                                boolean connectorAtDestination = RowHandler.checkForSameValues(takeActionRow,row,maxConnectorPositionAtDestination,crimpingConnectorPosition);
+
+                                boolean model = RowHandler.checkForSameValues(takeActionRow,row,maxModelPosition,crimpingModelsPosition);
+                                boolean single = row.getCell(wireTypePositionInCrimping).getStringCellValue().toLowerCase().contains("single");
+
+                                if(cavityAtSource && connectorAtSource && model && single){
+                                    add = true;
+                                }
+
+                                if(cavityAtDestination && connectorAtDestination && model && single){
+                                    add = true;
+                                }
+                            }
+
+
                             String wireTypeAtSource = takeActionRow.getCell(wireTypePositionInMaxAtSource).getStringCellValue();
                             String connectorAtSource = takeActionRow.getCell(maxConnectorPositionAtSource).getStringCellValue();
-
                             String wireTypeAtDestination = takeActionRow.getCell(wireTypePositionInMaxAtDestination).getStringCellValue();
                             String connectorAtDestination = takeActionRow.getCell(maxConnectorPositionAtDestination).getStringCellValue();
 
-                            Row newRow = crimpingSheet.createRow(maxRows.size() + matchesFound + 1);
-                            matchesFound++;
+                            boolean notDoubleAtSource = !wireTypeAtSource.equalsIgnoreCase("double") && crimpingConnectors.contains(connectorAtSource);
+                            boolean notDoubleAtDestination = !wireTypeAtDestination.equalsIgnoreCase("double") && crimpingConnectors.contains(connectorAtDestination);
 
-                            for(int i = 0; i<takeActionRow.getLastCellNum() ; i++){
-                                Cell newCell = newRow.createCell(i);
-                                if(takeActionRow.getCell(i)!=null){
-                                    newCell.setCellValue(takeActionRow.getCell(i).getStringCellValue());
+                            if(add){
+
+                                Row newRow = crimpingSheet.createRow(maxRows.size() + matchesFound + 1);
+                                matchesFound++;
+
+                                for(int i = 0; i<takeActionRow.getLastCellNum() ; i++){
+                                    Cell newCell = newRow.createCell(i);
+                                    if(takeActionRow.getCell(i)!=null){
+                                        newCell.setCellValue(takeActionRow.getCell(i).getStringCellValue());
+                                    }
+                                }
+
+                                if(notDoubleAtSource){
+                                    newRow.getCell(wireTypePositionInMaxAtSource).setCellValue("Double");
+                                    newRow.getCell(terminalPositionInMaxAtSource).setCellValue(crimpingRow.getCell(terminalPositionInCrimping).getStringCellValue());
+                                    String doubleWith = crimpingRow.getCell(wireDoubleCrimpingPositionInCrimping).getStringCellValue();
+                                    if(doubleWith.contains(key+",")){
+                                        doubleWith = doubleWith.replace(key+",","");
+                                    }
+                                    if(doubleWith.contains(","+key)){
+                                        doubleWith = doubleWith.replace(","+key,"");
+                                    }
+                                    newRow.getCell(doubleCrimpingPositionInMaxAtSource).setCellValue(doubleWith);
+                                }
+
+                                if(notDoubleAtDestination){
+                                    newRow.getCell(wireTypePositionInMaxAtDestination).setCellValue("Double");
+                                    newRow.getCell(terminalPositionInMaxAtDestination).setCellValue(crimpingRow.getCell(terminalPositionInCrimping).getStringCellValue());
+                                    String doubleWith = crimpingRow.getCell(wireDoubleCrimpingPositionInCrimping).getStringCellValue();
+                                    if(doubleWith.contains(key+",")){
+                                        doubleWith = doubleWith.replace(key+",","");
+                                    }
+                                    if(doubleWith.contains(","+key)){
+                                        doubleWith = doubleWith.replace(","+key,"");
+                                    }
+                                    newRow.getCell(doubleCrimpingPositionInMaxAtDestination).setCellValue(doubleWith);
+                                }
+                                addedRows.add(newRow);
+
+                            }else{
+
+                                if(notDoubleAtSource){
+                                    takeActionRow.getCell(wireTypePositionInMaxAtSource).setCellValue("Double");
+                                    takeActionRow.getCell(terminalPositionInMaxAtSource).setCellValue(crimpingRow.getCell(terminalPositionInCrimping).getStringCellValue());
+                                    String doubleWith = crimpingRow.getCell(wireDoubleCrimpingPositionInCrimping).getStringCellValue();
+                                    if(doubleWith.contains(key+",")){
+                                        doubleWith = doubleWith.replace(key+",","");
+                                    }
+                                    if(doubleWith.contains(","+key)){
+                                        doubleWith = doubleWith.replace(","+key,"");
+                                    }
+                                    takeActionRow.getCell(doubleCrimpingPositionInMaxAtSource).setCellValue(doubleWith);
+                                }
+
+                                if(notDoubleAtDestination){
+                                    takeActionRow.getCell(wireTypePositionInMaxAtDestination).setCellValue("Double");
+                                    takeActionRow.getCell(terminalPositionInMaxAtDestination).setCellValue(crimpingRow.getCell(terminalPositionInCrimping).getStringCellValue());
+                                    String doubleWith = crimpingRow.getCell(wireDoubleCrimpingPositionInCrimping).getStringCellValue();
+                                    if(doubleWith.contains(key+",")){
+                                        doubleWith = doubleWith.replace(key+",","");
+                                    }
+                                    if(doubleWith.contains(","+key)){
+                                        doubleWith = doubleWith.replace(","+key,"");
+                                    }
+                                    takeActionRow.getCell(doubleCrimpingPositionInMaxAtDestination).setCellValue(doubleWith);
                                 }
                             }
-                            if(!wireTypeAtSource.equalsIgnoreCase("double") && crimpingConnectors.contains(connectorAtSource)){
-                                newRow.getCell(wireTypePositionInMaxAtSource).setCellValue("Double");
-                                newRow.getCell(doubleCrimpingPositionInMaxAtSource).setCellValue(crimpingRow.getCell(wireDoubleCrimpingPositionInCrimping).getStringCellValue());
-                            }
-
-                            if(!wireTypeAtDestination.equalsIgnoreCase("double") && crimpingConnectors.contains(connectorAtDestination)){
-                                newRow.getCell(wireTypePositionInMaxAtDestination).setCellValue("Double");
-                                newRow.getCell(doubleCrimpingPositionInMaxAtDestination).setCellValue(crimpingRow.getCell(wireDoubleCrimpingPositionInCrimping).getStringCellValue());
-                            }
 
 
-                            addedRows.add(newRow);
                         }
                     }
                 }
             }
         }
-
 
 
 

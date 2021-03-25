@@ -1,4 +1,4 @@
-package utils;
+package v1.utils;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -228,5 +228,9 @@ public class RowHandler {
             rows.add(rowsWithSameKey);
         }
         return rows;
+    }
+
+    public static boolean checkForSameValues(Row row1,Row row2,int pos1,int pos2){
+        return (row1.getCell(pos1).getStringCellValue().toLowerCase().contains(row2.getCell(pos2).getStringCellValue().toLowerCase()) || row1.getCell(pos2).getStringCellValue().toLowerCase().contains(row1.getCell(pos1).getStringCellValue().toLowerCase()));
     }
 }
