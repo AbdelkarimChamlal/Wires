@@ -27,6 +27,13 @@ public class Values {
     public final static int MAX_TO_CONNECTOR = 38;
     public final static int MAX_TO_INTERNAL = 39;
     public final static int MAX_TO_CAVITY = 44;
+    public final static int MAX_WIRE_INTERNAL_NAME = 6;
+    public final static int MAX_FROM_WIRE_TYPE = 33;
+    public final static int MAX_TO_WIRE_TYPE = 52;
+    public final static int MAX_FROM_WIRE_DOUBLE = 34;
+    public final static int MAX_TO_WIRE_DOUBLE = 53;
+
+
 
 
     // crimping file values
@@ -36,6 +43,8 @@ public class Values {
     public final static int CAVITY_ORDER_IN_CRIMPING = 1;
     public final static int CRIMPING_TYPE_IN_CRIMPING_REPORT = 13;
     public final static int CRIMPING_INTERNAL = 0;
+    public final static int CRIMPING_DOUBLE = 14;
+    public final static int CRIMPING_WIRE_INTERNAL_NAME = 4;
 
 
     // plausibility file values

@@ -14,6 +14,23 @@ import java.util.Map;
 public class RowUtil {
 
     /**
+     * compares two rows and check if they have the same values in all column
+     * which mean they are duplication.
+     *
+     * @param row1 the original row
+     * @param row2 the second row
+     * @return true if both rows ar duplication of each other or false if not
+     */
+    public static boolean isDuplicated(List<String> row1,List<String> row2){
+        if(row1.size()!=row2.size())return true;
+
+        for(int i = 0; i<row1.size() ; i++){
+            if(!row1.get(i).equals(row2.get(i)))return false;
+        }
+        return true;
+    }
+
+    /**
      * get rows that intersect in multiple columns.
      *
      * @param table 2D java list
@@ -174,6 +191,56 @@ public class RowUtil {
             newRow.add("");
         }
         return newRow;
+    }
+
+    /**
+     * checks for the common values between two lists
+     *
+     * @param list1 String list number 1
+     * @param list2 String list number 2
+     * @return String list of the common values between list1 et list2
+     */
+    public static List<String> commonValues(List<String> list1,List<String> list2){
+        List<String> commonWires = new ArrayList<>();
+        for(String string1 : list1){
+            for(String string2:list2){
+                if(string1.equals(string2) && !commonWires.contains(string1)){
+                    commonWires.add(string1);
+                }
+            }
+        }
+        return commonWires;
+    }
+
+    /**
+     * remove duplicated rows from a table.
+     *
+     * @param table 2D list table
+     */
+    public static void removeDuplicatedRows(List<List<String>> table){
+        for(int i = 0 ; i < table.size() ; i++){
+            for(int j = i+1 ; j < table.size() ; j++){
+                if(isDuplicated(table.get(i),table.get(j))){
+                    table.remove(j);
+                    j--;
+                }
+            }
+        }
+    }
+
+    /**
+     * duplicates 2D tables and returns a copy
+     * @param originalTable 2D java list table
+     * @return a copy of the original table
+     */
+    public static List<List<String>> duplicateTable(List<List<String>> originalTable){
+        List<List<String>> duplicatedTable = new ArrayList<>();
+
+        for(List<String> row:originalTable){
+            duplicatedTable.add(duplicateRow(row));
+        }
+
+        return duplicatedTable;
     }
 }
 

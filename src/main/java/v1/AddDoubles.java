@@ -179,11 +179,11 @@ public class AddDoubles {
 
                     boolean hasDouble = false;
 
-                    //now them matching in both v1.models and connectors bois are some very bad boys
+                    //now then matching in both models and connectors bois are some very bad boys
                     //we need to see if they are doubled or not
                     //if they are double then fine
                     //if not the hasDouble flag will stay false
-                    //and this bois ladies and gentlemen needs to be added to the added rows and but them back to the max list
+                    //and this bois ladies and gentlemen needs to be added to the added rows and put them back to the max list
 
                     for(Row matching : matchingModelsAndConnectorsAndCavity){
 
@@ -201,7 +201,7 @@ public class AddDoubles {
                         }
                     }
 
-                    // now if we the flag is still false
+                    // now if the flag is still false
                     // this means we need to take actions
                     // first step of the action
                     // detect where the matching happened since we know there is a match
