@@ -73,14 +73,13 @@ public class Developer {
 //        }
 
         try{
-            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"test1.xlsx",Values.RESOURCES_FOLDER+"test2.xlsx");
+            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"max.xlsx",Values.RESOURCES_FOLDER+"new max.xlsx");
             maxChangeDetector.addPrimaryKeys();
             maxChangeDetector.initializeData();
             maxChangeDetector.prepareFinalData();
             maxChangeDetector.exportChangedLog(Values.RESOURCES_FOLDER+"testingData.xlsx","max logs");
-
         }catch(IOException e){
-            System.out.println("something Happened here");
+            System.out.println("something Happened here"+e);
         }
 
     }

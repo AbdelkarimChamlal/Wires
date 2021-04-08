@@ -1,14 +1,18 @@
 package v2.services;
 
 import org.apache.commons.collections4.map.HashedMap;
+import v2.exceptions.TemplateNotValid;
 import v2.utils.ExportData;
 import v2.utils.ImportData;
 import v2.utils.RowUtil;
+import v2.utils.TemplateUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static v2.utils.TemplateUtil.matchTemplate;
 
 public class MaxChangeDetector {
     List<List<String>> originalTable;
@@ -32,6 +36,12 @@ public class MaxChangeDetector {
     public MaxChangeDetector(String originFileName, String modifiedFileName) throws IOException {
         this.originalTable = ImportData.importWorkSheet(originFileName,0);
         this.modifiedTable = ImportData.importWorkSheet(modifiedFileName,0);
+        boolean originalMatchingMax = TemplateUtil.matchTemplate("max.xlsx",originalTable.get(0));
+        boolean modifiedMatchingMax = TemplateUtil.matchTemplate("max.xlsx",originalTable.get(0));
+
+        if(!originalMatchingMax || !modifiedMatchingMax){
+             throw new TemplateNotValid("Template of input doesn't match",new Throwable("header not valid"));
+        }
     }
 
 
@@ -93,26 +103,19 @@ public class MaxChangeDetector {
     }
 
     public static int stringCompare(String str1, String str2) {
-
         int l1 = str1.length();
         int l2 = str2.length();
         int lmin = Math.min(l1, l2);
-
         for (int i = 0; i < lmin; i++) {
             int str1_ch = (int)str1.charAt(i);
             int str2_ch = (int)str2.charAt(i);
-
             if (str1_ch != str2_ch) {
                 return str1_ch - str2_ch;
             }
         }
-
-
         if (l1 != l2) {
             return l1 - l2;
-        }
-
-        else {
+        } else {
             return 0;
         }
     }
@@ -244,6 +247,7 @@ public class MaxChangeDetector {
             finalHeader.add(modifiedOnlyColumn);
         }
 
+
         finalHeader.add("comment");
 
         int finalHeaderSize = finalHeader.size();
@@ -309,6 +313,8 @@ public class MaxChangeDetector {
             outputRow.set(finalHeaderSize-1,"-");
             finalTable.add(outputRow);
         }
+
+
 
 
 
