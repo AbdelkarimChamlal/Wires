@@ -4,6 +4,7 @@ import v2.helpers.Values;
 import v2.services.ChangeDetector;
 import v2.services.CompatibilityDetector;
 import v2.services.DoubleDetector;
+import v2.services.MaxChangeDetector;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,25 +51,36 @@ public class Developer {
 //        }
 
         //testing change detector
+//        try{
+//            List<Integer> uniqueKeys = new ArrayList<>();
+//
+//            uniqueKeys.add(Values.FMC_ORDER_IN_CRIMPING);
+//            uniqueKeys.add(Values.CRIMPING_WIRE_COSTUMER_POSITION);
+//            uniqueKeys.add(Values.COSTUMER_CONNECTOR_IN_CRIMPING);
+//            uniqueKeys.add(Values.CAVITY_ORDER_IN_CRIMPING);
+//            uniqueKeys.add(Values.CRIMPING_TYPE_IN_CRIMPING_REPORT);
+//
+//            ChangeDetector changeDetector = new ChangeDetector(Values.RESOURCES_FOLDER+"crimpingTest.xlsx",Values.RESOURCES_FOLDER+"resources Copy.xlsx",uniqueKeys);
+//
+//            changeDetector.initializeData();
+//
+//            changeDetector.prepareFinalData();
+//
+//            changeDetector.exportChangedLog(Values.RESOURCES_FOLDER+"changesLog.xlsx","log");
+//
+//        }catch(IOException e){
+//            System.out.println("Error on the level of IO");
+//        }
+
         try{
-            List<Integer> uniqueKeys = new ArrayList<>();
-
-            uniqueKeys.add(Values.FMC_ORDER_IN_CRIMPING);
-            uniqueKeys.add(Values.CRIMPING_WIRE_COSTUMER_POSITION);
-            uniqueKeys.add(Values.COSTUMER_CONNECTOR_IN_CRIMPING);
-            uniqueKeys.add(Values.CAVITY_ORDER_IN_CRIMPING);
-            uniqueKeys.add(Values.CRIMPING_TYPE_IN_CRIMPING_REPORT);
-
-            ChangeDetector changeDetector = new ChangeDetector(Values.RESOURCES_FOLDER+"crimpingTest.xlsx",Values.RESOURCES_FOLDER+"resources Copy.xlsx",uniqueKeys);
-
-            changeDetector.initializeData();
-
-            changeDetector.prepareFinalData();
-
-            changeDetector.exportChangedLog(Values.RESOURCES_FOLDER+"changesLog.xlsx","log");
+            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"test1.xlsx",Values.RESOURCES_FOLDER+"test2.xlsx");
+            maxChangeDetector.addPrimaryKeys();
+            maxChangeDetector.initializeData();
+            maxChangeDetector.prepareFinalData();
+            maxChangeDetector.exportChangedLog(Values.RESOURCES_FOLDER+"testingData.xlsx","max logs");
 
         }catch(IOException e){
-            System.out.println("Error on the level of IO");
+            System.out.println("something Happened here");
         }
 
     }
