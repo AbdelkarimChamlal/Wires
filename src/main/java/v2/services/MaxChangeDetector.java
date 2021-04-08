@@ -227,8 +227,7 @@ public class MaxChangeDetector {
     }
 
     public String getPM(String primaryKey,String statue){
-
-        return null;
+        return Math.random()+"";
     }
 
     public void prepareFinalData(){
@@ -249,7 +248,7 @@ public class MaxChangeDetector {
 
         int finalHeaderSize = finalHeader.size();
 
-                finalTable = new ArrayList<>();
+        finalTable = new ArrayList<>();
         finalTable.add(finalHeader);
 
         for (List<String> deletedRow : deletedRows) {
