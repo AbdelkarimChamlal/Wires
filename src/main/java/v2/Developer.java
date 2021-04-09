@@ -73,7 +73,7 @@ public class Developer {
 //        }
 
         try{
-            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"max.xlsx",Values.RESOURCES_FOLDER+"new max.xlsx");
+            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"maxSKPM.xlsx",Values.RESOURCES_FOLDER+"max.xlsx");
             maxChangeDetector.addPrimaryKeys();
             maxChangeDetector.initializeData();
             maxChangeDetector.prepareFinalData();

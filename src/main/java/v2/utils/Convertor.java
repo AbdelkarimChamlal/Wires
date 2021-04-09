@@ -1,9 +1,7 @@
 package v2.utils;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
+import v2.helpers.Values;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,6 +40,8 @@ public class Convertor {
     }
 
 
+
+
     /**
      * convert a java table "List" and write it into a sheet which is taken as input.
      *
@@ -55,6 +55,36 @@ public class Convertor {
             for(int j=0; j<table.get(i).size() ; j++){
                 Cell cell = row.createCell(j);
                 cell.setCellValue(table.get(i).get(j));
+            }
+        }
+        return sheet;
+    }
+
+    /**
+     * convert java 2D list into a sheet and checks if a cell contains
+     * <p></p>the modified symbol then it changes the background of this cell to indicate that it were modified.
+     *
+     * @param workbook Workbook instant of the output
+     * @param sheet The sheet we want to put convert table into
+     * @param table Java 2d List which will be converted
+     * @return the input sheet after adding the table values into it.
+     */
+
+    public static Sheet convertTableIntoSheetWithModifiedCellsColored(Workbook workbook,Sheet sheet,List<List<String>> table){
+        for(int i = 0 ; i<table.size() ; i++){
+            Row row = sheet.createRow(i);
+            for(int j=0; j<table.get(i).size() ; j++){
+                Cell cell = row.createCell(j);
+                String value = table.get(i).get(j);
+                if(value.contains(Values.MODIFIED_SYMBOL)){
+                    value = value.replace(Values.MODIFIED_SYMBOL,"");
+                    CellStyle cellStyle = workbook.createCellStyle();
+                    cellStyle.setFillForegroundColor(IndexedColors.YELLOW1.getIndex());
+                    cellStyle.setFillBackgroundColor(IndexedColors.YELLOW.getIndex());
+                    cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                    cell.setCellStyle(cellStyle);
+                }
+                cell.setCellValue(value);
             }
         }
         return sheet;

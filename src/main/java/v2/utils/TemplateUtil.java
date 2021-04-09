@@ -6,6 +6,7 @@ import v2.models.Template;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TemplateUtil {
 
@@ -29,11 +30,48 @@ public class TemplateUtil {
     public static boolean matchTemplate(String templateName,List<String> header) throws IOException {
         Template template = loadTemplate(templateName);
         if (header.size()<template.getColumns().size()) return false;
-        for(String column:header){
-            if(!template.getColumns().contains(column)){
+        for(String column:template.getColumns()){
+            if(!header.contains(column)){
                 return false;
             }
         }
         return true;
+    }
+
+
+    public static List<List<String>> convertToTemplate(List<List<String>> table,String templateName) throws IOException {
+
+        List<List<String>> convertedTable = new ArrayList<>(table.size());
+
+        Template template = loadTemplate(templateName);
+
+        convertedTable.add(template.getColumns());
+
+        // <in template,in original table>
+        Map<Integer,Integer> positionsMap = new HashedMap<>();
+
+        for(String templateColumn:template.getColumns()){
+            for(int i = 0 ; i < table.get(0).size() ; i ++){
+                if(templateColumn.equals(table.get(0).get(i))){
+                    positionsMap.put(template.getColumnPositions().get(templateColumn),i);
+                }
+            }
+        }
+
+        for(int i = 1 ; i < table.size() ; i++){
+            List<String> row = RowUtil.emptyRow(table.get(i).size());
+            for(int j = 0 ; j < row.size() ; j++){
+                if(positionsMap.containsKey(j)){
+                    row.set(j,table.get(i).get(positionsMap.get(j)));
+                }else{
+                    row.set(j,"");
+                }
+            }
+            convertedTable.add(row);
+        }
+
+
+
+        return convertedTable;
     }
 }

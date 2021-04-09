@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static v2.helpers.Values.MODIFIED_SYMBOL;
 import static v2.utils.TemplateUtil.matchTemplate;
 
 public class MaxChangeDetector {
@@ -37,7 +38,7 @@ public class MaxChangeDetector {
         this.originalTable = ImportData.importWorkSheet(originFileName,0);
         this.modifiedTable = ImportData.importWorkSheet(modifiedFileName,0);
         boolean originalMatchingMax = TemplateUtil.matchTemplate("max.xlsx",originalTable.get(0));
-        boolean modifiedMatchingMax = TemplateUtil.matchTemplate("max.xlsx",originalTable.get(0));
+        boolean modifiedMatchingMax = TemplateUtil.matchTemplate("max.xlsx",modifiedTable.get(0));
 
         if(!originalMatchingMax || !modifiedMatchingMax){
              throw new TemplateNotValid("Template of input doesn't match",new Throwable("header not valid"));
@@ -48,6 +49,7 @@ public class MaxChangeDetector {
     public void addPrimaryKeys(){
         originalTableId = originalTable.get(0).size();
         modifiedTableId = modifiedTable.get(0).size();
+
         String MP = "Module PN";
         String CWN = "Wire Customer Name";
         String FD = "From Double Crimp. With Wire(s)";
@@ -216,6 +218,7 @@ public class MaxChangeDetector {
                 for(String common:commonColumns){
                     if(!modifiedRow.get(commonMapInModified.get(common)).equals(originalRow.get(commonMapInOriginal.get(common)))){
                         matching=false;
+                        modifiedRow.set(commonMapInModified.get(common),modifiedRow.get(commonMapInModified.get(common))+MODIFIED_SYMBOL);
                     }
                 }
                 //non changed rows
@@ -230,7 +233,10 @@ public class MaxChangeDetector {
     }
 
     public String getPM(String primaryKey,String statue){
-        return Math.random()+"";
+        return Math.random()+"::"+statue+"::PM";
+    }
+    public String getSK(String primaryKey,String statue){
+        return Math.random()+"::"+statue+"::SK";
     }
 
     public void prepareFinalData(){
@@ -247,13 +253,15 @@ public class MaxChangeDetector {
             finalHeader.add(modifiedOnlyColumn);
         }
 
-
         finalHeader.add("comment");
 
         int finalHeaderSize = finalHeader.size();
 
         finalTable = new ArrayList<>();
         finalTable.add(finalHeader);
+
+
+
 
         for (List<String> deletedRow : deletedRows) {
             List<String> outputRow = RowUtil.emptyRow(finalHeaderSize);
@@ -315,13 +323,28 @@ public class MaxChangeDetector {
         }
 
 
-
+        if(finalHeader.contains("PM")){
+            int PMPosition = finalHeader.indexOf("PM");
+            int commentPosition = finalHeader.indexOf("comment");
+            int primaryKeyPosition = finalHeader.indexOf("Primary Key");
+            for (int i = 1 ; i < finalTable.size() ; i++){
+                finalTable.get(i).set(PMPosition,getPM(finalTable.get(i).get(primaryKeyPosition),finalTable.get(i).get(commentPosition)));
+            }
+        }
+        if(finalHeader.contains("SK")){
+            int SKPosition = finalHeader.indexOf("SK");
+            int commentPosition = finalHeader.indexOf("comment");
+            int primaryKeyPosition = finalHeader.indexOf("Primary Key");
+            for (int i = 1 ; i < finalTable.size() ; i++){
+                finalTable.get(i).set(SKPosition,getSK(finalTable.get(i).get(primaryKeyPosition),finalTable.get(i).get(commentPosition)));
+            }
+        }
 
 
     }
 
     public void exportChangedLog(String filename,String sheetName) throws IOException {
-        ExportData.exportTableToExcel(filename,sheetName,finalTable);
+        ExportData.exportTableToExcelWithModifiedCellsColored(filename,sheetName,TemplateUtil.convertToTemplate(finalTable,"maxLogOutput.xlsx"));
     }
 
 }

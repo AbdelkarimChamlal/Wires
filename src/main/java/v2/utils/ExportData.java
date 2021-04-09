@@ -30,4 +30,22 @@ public class ExportData {
         workbook.write(outputStream);
         outputStream.close();
     }
+
+    /**
+     * convert java 2D list into a sheet with a coloring
+     * <p>option for cells which contains certain symbol values that are defined in Values class.
+     *
+     * @param fileName the output path and name
+     * @param sheetName the output sheet name
+     * @param table the java 2D list which contains values
+     * @throws IOException in case of IO problems
+     */
+    public static void exportTableToExcelWithModifiedCellsColored(String fileName, String sheetName, List<List<String>> table) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(sheetName);
+        Convertor.convertTableIntoSheetWithModifiedCellsColored(workbook,sheet,table);
+        FileOutputStream outputStream =  new FileOutputStream(fileName);
+        workbook.write(outputStream);
+        outputStream.close();
+    }
 }

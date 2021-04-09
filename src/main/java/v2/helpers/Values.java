@@ -50,4 +50,6 @@ public class Values {
     // plausibility file values
     public final static int FMC_ORDER_IN_PLAUSIBILITY = 1;
 
+    public final static String MODIFIED_SYMBOL = "::!!MoDiFiEDD!!::";
+
 }
