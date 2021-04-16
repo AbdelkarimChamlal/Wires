@@ -22,4 +22,5 @@ public class Template {
     public void setColumnPositions(Map<String, Integer> columnPositions) {
         this.columnPositions = columnPositions;
     }
+
 }

@@ -39,9 +39,6 @@ public class Convertor {
         return convertedList;
     }
 
-
-
-
     /**
      * convert a java table "List" and write it into a sheet which is taken as input.
      *
@@ -90,4 +87,14 @@ public class Convertor {
         return sheet;
     }
 
+    public static Sheet addToSheet(Sheet sheet,List<List<String>> table){
+        for(int i = 0 ; i<table.size() ; i++){
+            Row row = sheet.createRow(i+1);
+            for(int j=0; j<table.get(i).size() ; j++){
+                Cell cell = row.createCell(j);
+                cell.setCellValue(table.get(i).get(j));
+            }
+        }
+        return sheet;
+    }
 }

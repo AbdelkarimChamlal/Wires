@@ -4,13 +4,13 @@ import org.apache.commons.collections4.map.HashedMap;
 import v2.helpers.Values;
 import v2.utils.ExportData;
 import v2.utils.ImportData;
+import v2.utils.JavaUtils;
 import v2.utils.RowUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static v2.helpers.Values.*;
 
@@ -365,7 +365,7 @@ public class CompatibilityDetector {
         row.set(CRIMPING_TYPE_IN_CRIMPING_REPORT,"Double");
         row.set(CRIMPING_WIRE_COSTUMER_POSITION,row1.get(MAX_WIRE_COSTUMER));
         row.set(CRIMPING_INTERNAL,connector);
-        String crimpingDouble = (stringCompare(row1.get(MAX_WIRE_COSTUMER),row2.get(MAX_WIRE_COSTUMER))<0)?row1.get(MAX_WIRE_COSTUMER) +","+row2.get(MAX_WIRE_COSTUMER) : row2.get(MAX_WIRE_COSTUMER) +","+row1.get(MAX_WIRE_COSTUMER);
+        String crimpingDouble = (JavaUtils.stringCompare(row1.get(MAX_WIRE_COSTUMER),row2.get(MAX_WIRE_COSTUMER))<0)?row1.get(MAX_WIRE_COSTUMER) +","+row2.get(MAX_WIRE_COSTUMER) : row2.get(MAX_WIRE_COSTUMER) +","+row1.get(MAX_WIRE_COSTUMER);
 
         row.set(CRIMPING_DOUBLE, crimpingDouble);
 
@@ -545,30 +545,6 @@ public class CompatibilityDetector {
         return plausibilityMap;
     }
 
-    public static int stringCompare(String str1, String str2)
-    {
 
-        int l1 = str1.length();
-        int l2 = str2.length();
-        int lmin = Math.min(l1, l2);
-
-        for (int i = 0; i < lmin; i++) {
-            int str1_ch = (int)str1.charAt(i);
-            int str2_ch = (int)str2.charAt(i);
-
-            if (str1_ch != str2_ch) {
-                return str1_ch - str2_ch;
-            }
-        }
-
-
-        if (l1 != l2) {
-            return l1 - l2;
-        }
-
-        else {
-            return 0;
-        }
-    }
 
 }

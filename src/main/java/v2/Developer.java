@@ -1,11 +1,11 @@
 package v2;
 
 import v2.helpers.Values;
-import v2.services.ChangeDetector;
-import v2.services.CompatibilityDetector;
-import v2.services.DoubleDetector;
-import v2.services.MaxChangeDetector;
+import v2.services.*;
+import v2.utils.ImportData;
+import v2.utils.JavaUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,8 @@ public class Developer {
 
     public static void main(String[] args) {
 
-        // let us develop some CompatibilityDetector
-
-        // testing the compatibilityDetector
+//          let us develop some CompatibilityDetector
+//          testing the compatibilityDetector
 //        try{
 //            // initialize that badBoy
 //            CompatibilityDetector compatibilityDetector = new CompatibilityDetector(Values.RESOURCES_FOLDER +"max.xlsx",Values.RESOURCES_FOLDER+"plausibility.xlsm",Values.RESOURCES_FOLDER+"crimping.xlsx");
@@ -37,8 +36,7 @@ public class Developer {
 //        }catch(IOException error_message){
 //            System.out.println("Failed to read files\n"+error_message);
 //        }
-
-        //testing the DoubleDetector
+//          testing the DoubleDetector
 //        try{
 //            DoubleDetector doubleDetector = new DoubleDetector(Values.RESOURCES_FOLDER +"max.xlsx",Values.RESOURCES_FOLDER+"resources.xlsx");
 //            doubleDetector.initializeData();
@@ -49,8 +47,7 @@ public class Developer {
 //        }catch(IOException e){
 //            System.out.println(e.getMessage());
 //        }
-
-        //testing change detector
+//          testing change detector
 //        try{
 //            List<Integer> uniqueKeys = new ArrayList<>();
 //
@@ -71,16 +68,32 @@ public class Developer {
 //        }catch(IOException e){
 //            System.out.println("Error on the level of IO");
 //        }
+//        try{
+//            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"maxSKPM.xlsx",Values.RESOURCES_FOLDER+"max.xlsx");
+//            maxChangeDetector.addPrimaryKeys();
+//            maxChangeDetector.initializeData();
+//            maxChangeDetector.prepareFinalData();
+//
+//            List<String> allDirectories = ImportData.getAllDirectories("uploads");
+//            int latestDirectory = JavaUtils.maxValueOfList(JavaUtils.convertToInteger(allDirectories));
+//            latestDirectory++;
+//            JavaUtils.createNewDirectory("uploads/",latestDirectory+"");
+//
+//            maxChangeDetector.exportChangedLog("uploads/"+latestDirectory+"/Cutting Data.xlsx","Wire List");
+//        }catch(IOException e){
+//            System.out.println("something Happened here"+e);
+//        }
 
         try{
-            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"maxSKPM.xlsx",Values.RESOURCES_FOLDER+"max.xlsx");
-            maxChangeDetector.addPrimaryKeys();
-            maxChangeDetector.initializeData();
-            maxChangeDetector.prepareFinalData();
-            maxChangeDetector.exportChangedLog(Values.RESOURCES_FOLDER+"testingData.xlsx","max logs");
+            CuttingDataGenerator cuttingDataGenerator = new CuttingDataGenerator(Values.RESOURCES_FOLDER+"maxSKPM.xlsx");
+            cuttingDataGenerator.initializeData();
+            cuttingDataGenerator.prepareFinalData();
+            cuttingDataGenerator.exportCuttingData("cuttingOutput.xlsx");
         }catch(IOException e){
-            System.out.println("something Happened here"+e);
+            System.out.println(e);
         }
+
+
 
     }
 }

@@ -1,8 +1,6 @@
 package v2.utils;
 
-
 import org.apache.commons.collections4.map.HashedMap;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -243,4 +241,3 @@ public class RowUtil {
         return duplicatedTable;
     }
 }
-

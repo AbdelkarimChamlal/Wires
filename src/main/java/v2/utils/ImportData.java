@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,6 @@ public class ImportData {
     }
 
     /**
-     *
      * import a sheet from an excel file and turn it into a java table
      * @param filePath file path compared to the resource file
      * @param sheetName Sheet name inside the excel file
@@ -40,4 +40,17 @@ public class ImportData {
         Sheet sheet = workbook.getSheet(sheetName);
         return Convertor.convertXlsxSheetUsingPOIToList(sheet);
     }
+
+    public static List<String> getAllDirectories(String path){
+        List<String> allDirectories = new ArrayList<>();
+        final File folder = new File(path);
+        for(final File fileEntry:folder.listFiles()){
+            if (fileEntry.isDirectory()){
+                allDirectories.add(fileEntry.getName());
+            }
+        }
+        return allDirectories;
+    }
+
 }
+

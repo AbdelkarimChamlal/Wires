@@ -2,10 +2,7 @@ package v2.services;
 
 import org.apache.commons.collections4.map.HashedMap;
 import v2.exceptions.TemplateNotValid;
-import v2.utils.ExportData;
-import v2.utils.ImportData;
-import v2.utils.RowUtil;
-import v2.utils.TemplateUtil;
+import v2.utils.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +11,12 @@ import java.util.Map;
 
 import static v2.helpers.Values.MODIFIED_SYMBOL;
 import static v2.utils.TemplateUtil.matchTemplate;
+
+
+/**
+ * detects changes that happened to max wires list.
+ *
+ */
 
 public class MaxChangeDetector {
     List<List<String>> originalTable;
@@ -45,15 +48,14 @@ public class MaxChangeDetector {
         }
     }
 
-
     public void addPrimaryKeys(){
         originalTableId = originalTable.get(0).size();
         modifiedTableId = modifiedTable.get(0).size();
 
-        String MP = "Module PN";
-        String CWN = "Wire Customer Name";
-        String FD = "From Double Crimp. With Wire(s)";
-        String TD = "To Double Crimp. With Wire(s)";
+        String MP   = "Module PN";
+        String CWN  = "Wire Customer Name";
+        String FD   = "From Double Crimp. With Wire(s)";
+        String TD   = "To Double Crimp. With Wire(s)";
 
         int originalMP=0,originalCWN=0,originalFD=0,originalTD = 0;
 
@@ -94,33 +96,16 @@ public class MaxChangeDetector {
 
 
         for(int i = 1; i < originalTable.size() ;i++ ){
-            String sortedDouble = (stringCompare(originalTable.get(i).get(originalFD),originalTable.get(i).get(originalTD))>0)?originalTable.get(i).get(originalFD)+originalTable.get(i).get(originalTD):originalTable.get(i).get(originalTD)+originalTable.get(i).get(originalFD);
+            String sortedDouble = (JavaUtils.stringCompare(originalTable.get(i).get(originalFD),originalTable.get(i).get(originalTD))>0)?originalTable.get(i).get(originalFD)+originalTable.get(i).get(originalTD):originalTable.get(i).get(originalTD)+originalTable.get(i).get(originalFD);
             originalTable.get(i).add(originalTable.get(i).get(originalMP)+originalTable.get(i).get(originalCWN)+sortedDouble);
         }
         for(int i = 1; i < modifiedTable.size() ;i++ ){
-            String sortedDouble = (stringCompare(modifiedTable.get(i).get(modifiedFD),modifiedTable.get(i).get(modifiedTD))>0)?modifiedTable.get(i).get(modifiedFD)+modifiedTable.get(i).get(modifiedTD):modifiedTable.get(i).get(modifiedTD)+modifiedTable.get(i).get(modifiedFD);
+            String sortedDouble = (JavaUtils.stringCompare(modifiedTable.get(i).get(modifiedFD),modifiedTable.get(i).get(modifiedTD))>0)?modifiedTable.get(i).get(modifiedFD)+modifiedTable.get(i).get(modifiedTD):modifiedTable.get(i).get(modifiedTD)+modifiedTable.get(i).get(modifiedFD);
             modifiedTable.get(i).add(modifiedTable.get(i).get(modifiedMP)+modifiedTable.get(i).get(modifiedCWN)+sortedDouble);
         }
 
     }
 
-    public static int stringCompare(String str1, String str2) {
-        int l1 = str1.length();
-        int l2 = str2.length();
-        int lmin = Math.min(l1, l2);
-        for (int i = 0; i < lmin; i++) {
-            int str1_ch = (int)str1.charAt(i);
-            int str2_ch = (int)str2.charAt(i);
-            if (str1_ch != str2_ch) {
-                return str1_ch - str2_ch;
-            }
-        }
-        if (l1 != l2) {
-            return l1 - l2;
-        } else {
-            return 0;
-        }
-    }
 
     public void initializeData() {
         commonColumns = new ArrayList<>();
@@ -232,9 +217,32 @@ public class MaxChangeDetector {
         }
     }
 
-    public String getPM(String primaryKey,String statue){
-        return Math.random()+"::"+statue+"::PM";
+    public String getPM(String PM,String statue){
+        if(statue.equalsIgnoreCase("modified")){
+
+            String version = PM.substring(PM.length()-2).toUpperCase();
+
+            int total = version.charAt(0)-65 + version.charAt(1)-48 + 1 ;
+
+            char p1 = (char) (total/26 + 65);
+            char p2 = (char) (total%26 + 48);
+
+            return PM.substring(0,PM.length()-2) + p1 + p2;
+        }else
+        if(statue.equalsIgnoreCase("added")){
+            return "";
+        }else
+        if(statue.equalsIgnoreCase("deleted")){
+            return PM;
+
+        }else
+        if(statue.equalsIgnoreCase("-")){
+            return PM;
+        }
+
+        return "-";
     }
+
     public String getSK(String primaryKey,String statue){
         return Math.random()+"::"+statue+"::SK";
     }
@@ -324,11 +332,17 @@ public class MaxChangeDetector {
 
 
         if(finalHeader.contains("PM")){
+
             int PMPosition = finalHeader.indexOf("PM");
+
             int commentPosition = finalHeader.indexOf("comment");
+
             int primaryKeyPosition = finalHeader.indexOf("Primary Key");
+
             for (int i = 1 ; i < finalTable.size() ; i++){
-                finalTable.get(i).set(PMPosition,getPM(finalTable.get(i).get(primaryKeyPosition),finalTable.get(i).get(commentPosition)));
+
+                finalTable.get(i).set(PMPosition,getPM(finalTable.get(i).get(PMPosition),finalTable.get(i).get(commentPosition)));
+
             }
         }
         if(finalHeader.contains("SK")){
