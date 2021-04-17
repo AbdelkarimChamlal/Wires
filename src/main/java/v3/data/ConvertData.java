@@ -50,7 +50,13 @@ public class ConvertData {
         for(int i = 0 ; i < confs.length; i++){
             if(!confs[i].startsWith("#") && confs[i].length()>2){
                 String[] values = confs[i].split("=");
-                configs.getValues().put(values[0],values[1]);
+                String key = values[0];
+                String value = values[1];
+
+                if(value.startsWith("\"") && value.endsWith("\"")){
+                    value = value.substring(1,value.length()-1);
+                }
+                configs.getValues().put(key,value);
             }
         }
         return configs;
