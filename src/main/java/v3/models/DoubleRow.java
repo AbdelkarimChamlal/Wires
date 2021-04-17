@@ -1,4 +1,5 @@
 package v3.models;
 
-public class DoubleRow {
+public class DoubleRow extends Row{
+
 }
