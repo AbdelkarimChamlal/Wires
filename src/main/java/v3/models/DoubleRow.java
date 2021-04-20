@@ -1,5 +1,7 @@
 package v3.models;
 
-public class DoubleRow extends Row{
+import v3.primitiveModels.Row;
+
+public class DoubleRow extends Row {
 
 }

@@ -1,9 +1,7 @@
-package v3.abstracts;
+package v3.primitiveModels;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Row implements v3.interfaces.Row {
     List<String> values;
@@ -12,12 +10,20 @@ public class Row implements v3.interfaces.Row {
         this.values = new ArrayList<>();
     }
 
+    public Row(int size){
+        this.values = new ArrayList<>(size);
+    }
+
     public String getValue(int columnPosition){
         return values.get(columnPosition);
     }
 
     public void addValue(String column){
         values.add(column);
+    }
+
+    public void setValues(List<String> values){
+        this.values = values;
     }
 
     public boolean containsValue(String value){

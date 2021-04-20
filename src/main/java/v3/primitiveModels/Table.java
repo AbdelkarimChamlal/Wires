@@ -1,6 +1,4 @@
-package v3.abstracts;
-
-import v3.abstracts.Row;
+package v3.primitiveModels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,4 +21,17 @@ public class Table implements v3.interfaces.Table {
     public Table(){
         this.rows = new ArrayList<>();
     }
+
+    public Row getRow(int rowPosition){
+        return rows.get(rowPosition);
+    }
+
+    public void addRow(Row row){
+        rows.add(row);
+    }
+
+    public void removeRow(int rowIndex){
+        rows.remove(rowIndex);
+    }
+
 }

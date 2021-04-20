@@ -13,6 +13,14 @@ public class Configs {
         return values;
     }
 
+    public boolean containsConfig(String config){
+        return  values.containsKey(config);
+    }
+
+    public String getConfigValue(String config){
+        return values.get(config);
+    }
+
     public void setValues(Map<String, String> values) {
         this.values = values;
     }

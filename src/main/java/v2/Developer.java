@@ -68,30 +68,29 @@ public class Developer {
 //        }catch(IOException e){
 //            System.out.println("Error on the level of IO");
 //        }
-//        try{
-//            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"maxSKPM.xlsx",Values.RESOURCES_FOLDER+"max.xlsx");
-//            maxChangeDetector.addPrimaryKeys();
-//            maxChangeDetector.initializeData();
-//            maxChangeDetector.prepareFinalData();
-//
-//            List<String> allDirectories = ImportData.getAllDirectories("uploads");
-//            int latestDirectory = JavaUtils.maxValueOfList(JavaUtils.convertToInteger(allDirectories));
-//            latestDirectory++;
-//            JavaUtils.createNewDirectory("uploads/",latestDirectory+"");
-//
-//            maxChangeDetector.exportChangedLog("uploads/"+latestDirectory+"/Cutting Data.xlsx","Wire List");
-//        }catch(IOException e){
-//            System.out.println("something Happened here"+e);
-//        }
-
         try{
-            CuttingDataGenerator cuttingDataGenerator = new CuttingDataGenerator(Values.RESOURCES_FOLDER+"maxSKPM.xlsx");
-            cuttingDataGenerator.initializeData();
-            cuttingDataGenerator.prepareFinalData();
-            cuttingDataGenerator.exportCuttingData("cuttingOutput.xlsx");
+            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"newMAXSKPM.xlsx",Values.RESOURCES_FOLDER+"max.xlsx");
+            maxChangeDetector.addPrimaryKeys();
+            maxChangeDetector.initializeData();
+            maxChangeDetector.prepareFinalData();
+
+            List<String> allDirectories = ImportData.getAllDirectories("uploads");
+            int latestDirectory = JavaUtils.maxValueOfList(JavaUtils.convertListToIntegers(allDirectories));
+            latestDirectory++;
+            JavaUtils.createNewDirectory("uploads/",latestDirectory+"");
+
+            maxChangeDetector.exportChangedLog("uploads/"+latestDirectory+"/Cutting Data.xlsx","Wire List");
         }catch(IOException e){
-            System.out.println(e);
+            System.out.println("something Happened here"+e);
         }
+//        try{
+//            CuttingDataGenerator cuttingDataGenerator = new CuttingDataGenerator(Values.RESOURCES_FOLDER+"maxSKPM.xlsx");
+//            cuttingDataGenerator.initializeData();
+//            cuttingDataGenerator.prepareFinalData();
+//            cuttingDataGenerator.exportCuttingData("cuttingOutput.xlsx");
+//        }catch(IOException e){
+//            System.out.println(e);
+//        }
 
 
 

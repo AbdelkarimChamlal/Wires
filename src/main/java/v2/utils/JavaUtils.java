@@ -23,7 +23,7 @@ public class JavaUtils {
         }
     }
 
-    public static List<Integer> convertToInteger(List<String> integers){
+    public static List<Integer> convertListToIntegers(List<String> integers){
         List<Integer> integerList = new ArrayList<>();
         for (String integer:integers){
             int intValue = Integer.parseInt(integer);

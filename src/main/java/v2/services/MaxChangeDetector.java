@@ -217,20 +217,17 @@ public class MaxChangeDetector {
         }
     }
 
-    public String getPM(String PM,String statue){
+    public String getPM(String PM,String statue,String wireCustomer){
         if(statue.equalsIgnoreCase("modified")){
 
-            String version = PM.substring(PM.length()-2).toUpperCase();
+            String version = RegUtil.extractRevision(PM);
 
-            int total = version.charAt(0)-65 + version.charAt(1)-48 + 1 ;
+            int total = Integer.parseInt(version.substring(0,version.length()-1))+1;
 
-            char p1 = (char) (total/26 + 65);
-            char p2 = (char) (total%26 + 48);
-
-            return PM.substring(0,PM.length()-2) + p1 + p2;
+            return PM.substring(0,PM.length()-2) + total + version.charAt(version.length()-1);
         }else
         if(statue.equalsIgnoreCase("added")){
-            return "";
+            return "510"+wireCustomer+"_1A";
         }else
         if(statue.equalsIgnoreCase("deleted")){
             return PM;
@@ -243,8 +240,22 @@ public class MaxChangeDetector {
         return "-";
     }
 
-    public String getSK(String primaryKey,String statue){
-        return Math.random()+"::"+statue+"::SK";
+    public String getSK(String SK,String statue){
+        if(statue.equalsIgnoreCase("modified")){
+            return "";
+        }else
+        if(statue.equalsIgnoreCase("added")){
+            return "";
+        }else
+        if(statue.equalsIgnoreCase("deleted")){
+            return SK;
+
+        }else
+        if(statue.equalsIgnoreCase("-")){
+            return SK;
+        }
+
+        return "-";
     }
 
     public void prepareFinalData(){
@@ -337,20 +348,19 @@ public class MaxChangeDetector {
 
             int commentPosition = finalHeader.indexOf("comment");
 
-            int primaryKeyPosition = finalHeader.indexOf("Primary Key");
+            int wireCustomer = finalHeader.indexOf("Wire Customer Name");
 
             for (int i = 1 ; i < finalTable.size() ; i++){
 
-                finalTable.get(i).set(PMPosition,getPM(finalTable.get(i).get(PMPosition),finalTable.get(i).get(commentPosition)));
+                finalTable.get(i).set(PMPosition,getPM(finalTable.get(i).get(PMPosition),finalTable.get(i).get(commentPosition),finalTable.get(i).get(wireCustomer)));
 
             }
         }
         if(finalHeader.contains("SK")){
             int SKPosition = finalHeader.indexOf("SK");
             int commentPosition = finalHeader.indexOf("comment");
-            int primaryKeyPosition = finalHeader.indexOf("Primary Key");
             for (int i = 1 ; i < finalTable.size() ; i++){
-                finalTable.get(i).set(SKPosition,getSK(finalTable.get(i).get(primaryKeyPosition),finalTable.get(i).get(commentPosition)));
+                finalTable.get(i).set(SKPosition,getSK(finalTable.get(i).get(SKPosition),finalTable.get(i).get(commentPosition)));
             }
         }
 
