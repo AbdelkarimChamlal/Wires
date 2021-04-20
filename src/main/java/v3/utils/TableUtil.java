@@ -59,4 +59,14 @@ public class TableUtil {
         }
     }
 
+    public static void removeColumn(v3.interfaces.Table table, int columnPosition){
+        for(int i = 0 ; i < table.getRows().size() ; i++){
+            table.getRows().get(i).getValues().remove(columnPosition);
+        }
+    }
+
+    public static void removeRow(v3.interfaces.Table table, int rowIndex){
+        table.getRows().remove(rowIndex);
+    }
+
 }

@@ -31,7 +31,6 @@ public class MaxRow implements Row {
         this.columns = columns;
     }
 
-
     public String getModuleName() {
         return moduleName;
     }
@@ -122,21 +121,21 @@ public class MaxRow implements Row {
 
     @Override
     public String getValue(int columnPosition) {
-        return null;
+        return values.get(columnPosition);
     }
 
     @Override
     public void addValue(String column) {
-
+        values.add(column);
     }
 
     @Override
     public boolean containsValue(String value) {
-        return false;
+        return values.contains(value);
     }
 
     @Override
     public List<String> getValues() {
-        return null;
+        return this.values;
     }
 }

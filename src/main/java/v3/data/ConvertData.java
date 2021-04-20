@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import v3.models.Configs;
 import v3.interfaces.Table;
+import v3.models.DoubleRow;
 import v3.models.MaxRow;
 
 import java.util.Iterator;
@@ -26,7 +27,7 @@ public class ConvertData {
         Iterator<Row> rowIterator = sheet.rowIterator();
         while(rowIterator.hasNext()){
             Row row = rowIterator.next();
-            v3.interfaces.Row row1 = new v3.primitiveModels.Row();
+            v3.primitiveModels.Row row1 = new v3.primitiveModels.Row();
             for(int i =0;i<row.getLastCellNum() ; i++){
                 try{
                     Cell cell = row.getCell(i);
@@ -39,7 +40,7 @@ public class ConvertData {
                     row1.addValue("");
                 }
             }
-            table.getRows().add((v3.primitiveModels.Row) row1);
+            table.getRows().add(row1);
         }
         return table;
     }
@@ -95,5 +96,21 @@ public class ConvertData {
         maxRow.setValues(row.getValues());
 
         return maxRow;
+    }
+
+    public static DoubleRow convertRowIntoDoubleRow(v3.primitiveModels.Row row, Configs crimpingConfigs, List<String> columns){
+        DoubleRow doubleRow = new DoubleRow();
+
+        doubleRow.setConnectorName(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("connectorName"))));
+        doubleRow.setCavity(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("cavity"))));
+        doubleRow.setWireCustomerName(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("wireCustomerName"))));
+        doubleRow.setCrimpingType(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("crimpingType"))));
+        doubleRow.setWireFM(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("wireFM"))));
+        doubleRow.setCrimpingDouble(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("crimpingDouble"))));
+
+        doubleRow.setColumns(columns);
+        doubleRow.setValues(row.getValues());
+
+        return doubleRow;
     }
 }
