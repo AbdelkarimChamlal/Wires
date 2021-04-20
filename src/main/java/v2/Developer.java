@@ -38,7 +38,7 @@ public class Developer {
 //        }
 //          testing the DoubleDetector
 //        try{
-//            DoubleDetector doubleDetector = new DoubleDetector(Values.RESOURCES_FOLDER +"max.xlsx",Values.RESOURCES_FOLDER+"resources.xlsx");
+//            DoubleDetector doubleDetector = new DoubleDetector(Values.RESOURCES_FOLDER +"max.xlsx",Values.RESOURCES_FOLDER+"crimping.xlsx");
 //            doubleDetector.initializeData();
 //            doubleDetector.prepareFinalTable();
 //            doubleDetector.exportFinalTable(Values.RESOURCES_FOLDER+"finalMax.xlsx","finalMax");
@@ -68,21 +68,21 @@ public class Developer {
 //        }catch(IOException e){
 //            System.out.println("Error on the level of IO");
 //        }
-        try{
-            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"newMAXSKPM.xlsx",Values.RESOURCES_FOLDER+"max.xlsx");
-            maxChangeDetector.addPrimaryKeys();
-            maxChangeDetector.initializeData();
-            maxChangeDetector.prepareFinalData();
-
-            List<String> allDirectories = ImportData.getAllDirectories("uploads");
-            int latestDirectory = JavaUtils.maxValueOfList(JavaUtils.convertListToIntegers(allDirectories));
-            latestDirectory++;
-            JavaUtils.createNewDirectory("uploads/",latestDirectory+"");
-
-            maxChangeDetector.exportChangedLog("uploads/"+latestDirectory+"/Cutting Data.xlsx","Wire List");
-        }catch(IOException e){
-            System.out.println("something Happened here"+e);
-        }
+//        try{
+//            MaxChangeDetector maxChangeDetector = new MaxChangeDetector(Values.RESOURCES_FOLDER+"newMAXSKPM.xlsx",Values.RESOURCES_FOLDER+"max.xlsx");
+//            maxChangeDetector.addPrimaryKeys();
+//            maxChangeDetector.initializeData();
+//            maxChangeDetector.prepareFinalData();
+//
+//            List<String> allDirectories = ImportData.getAllDirectories("uploads");
+//            int latestDirectory = JavaUtils.maxValueOfList(JavaUtils.convertListToIntegers(allDirectories));
+//            latestDirectory++;
+//            JavaUtils.createNewDirectory("uploads/",latestDirectory+"");
+//
+//            maxChangeDetector.exportChangedLog("uploads/"+latestDirectory+"/Cutting Data.xlsx","Wire List");
+//        }catch(IOException e){
+//            System.out.println("something Happened here"+e);
+//        }
 //        try{
 //            CuttingDataGenerator cuttingDataGenerator = new CuttingDataGenerator(Values.RESOURCES_FOLDER+"maxSKPM.xlsx");
 //            cuttingDataGenerator.initializeData();
@@ -92,7 +92,14 @@ public class Developer {
 //            System.out.println(e);
 //        }
 
-
+        try{
+            CuttingDataCompact cuttingDataCompact = new CuttingDataCompact("uploads/1020/newMAXSKPM.xlsx");
+            cuttingDataCompact.initializeData();
+            cuttingDataCompact.exportData("uploads/cuttingData.xlsx","cuttingData");
+//            cuttingDataCompact.exportData("uploads/cuttingDataCompacted2.xlsx","compactedData");
+        }catch (Exception e){
+            System.out.println(e);
+        }
 
     }
 }

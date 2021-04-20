@@ -1,9 +1,7 @@
 package v2.utils;
 
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -30,6 +28,16 @@ public class ExportData {
         FileOutputStream outputStream =  new FileOutputStream(fileName);
         workbook.write(outputStream);
         outputStream.close();
+    }
+
+    public static void fillSheetWithTable(Sheet sheet,List<List<String>> table){
+        for(int i = 1 ; i < table.size() ; i++){
+            Row row = sheet.createRow(i);
+            for(int j = 0 ; j < table.get(0).size() ; j++){
+                Cell cell = row.createCell(j);
+                cell.setCellValue(table.get(i).get(j));
+            }
+        }
     }
 
     /**
@@ -68,4 +76,12 @@ public class ExportData {
         outputStream.close();
     }
 
+    public static void exportTableUsingTemplate(String fileName, List<List<String>> table,String templateName) throws IOException {
+        Workbook workbook = WorkbookFactory.create(new File("templates/"+templateName));
+        Sheet sheet = workbook.getSheetAt(0);
+        fillSheetWithTable(sheet,TemplateUtil.convertToTemplate(table,templateName));
+        FileOutputStream outputStream =  new FileOutputStream(fileName);
+        workbook.write(outputStream);
+        outputStream.close();
+    }
 }

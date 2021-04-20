@@ -72,7 +72,6 @@ public class DoubleDetector {
                 String checkOn = "";
                 List<List<String>> matchingWires = new ArrayList<>();
                 boolean foundMatch = false;
-
                 for(List<String> maxSubRow:maxSubTable){
                     if(maxSubRow.get(MAX_FROM_CAVITY).equals(cavity) && maxSubRow.get(MAX_FROM_CONNECTOR).equals(connector) && models.contains(maxSubRow.get(FMC_ORDER_IN_MAX))){
                         checkOn = "source";
@@ -90,6 +89,7 @@ public class DoubleDetector {
                         }
                     }
                 }
+
 
                 if(!foundMatch && matchingWires.size()>0) {
                     //save a copy of the wires
@@ -117,6 +117,7 @@ public class DoubleDetector {
                     }
 
                     // add new row
+
                     if(matchingWires.size()==0){
                         if(checkOn.equalsIgnoreCase("source")){
                             copy.set(MAX_FROM_WIRE_TYPE,crimpingType);

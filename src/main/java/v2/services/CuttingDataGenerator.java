@@ -30,6 +30,7 @@ public class CuttingDataGenerator {
         int wireTypePosition = maxWireList.get(0).indexOf("Wire Type");
         int fromCrimpingType = maxWireList.get(0).indexOf("From Crimping Type");
         int toCrimpingType = maxWireList.get(0).indexOf("To Crimping Type");
+        int wireCostumerName = maxWireList.get(0).indexOf("Wire Customer Name");
 
         splices = new ArrayList<>();
         wireList = new ArrayList<>();
