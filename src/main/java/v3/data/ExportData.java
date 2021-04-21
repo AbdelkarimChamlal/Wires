@@ -10,6 +10,9 @@ import v3.primitiveModels.Table;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 /**
@@ -24,5 +27,9 @@ public class ExportData {
         workbook.write(outputStream);
         outputStream.close();
         workbook.close();
+    }
+
+    public static void appendTextToFile(String filePath,String text) throws IOException {
+        Files.write(Paths.get(filePath), ("\n"+text).getBytes(), StandardOpenOption.APPEND);
     }
 }

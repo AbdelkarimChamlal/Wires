@@ -2,10 +2,10 @@ package v2.utils;
 
 import org.apache.poi.ss.usermodel.*;
 import v2.helpers.Values;
+import v2.models.Revision;
+import v3.models.Configs;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Convert data from one format to other
@@ -97,4 +97,38 @@ public class Convertor {
         }
         return sheet;
     }
+
+    public static Map<String, Revision> convertStringToRevisions(String text){
+        Map<String,Revision> revisionMap = new HashMap<>();
+        String[] revisions = text.split("\n");
+        for(int i = 0 ; i < revisions.length; i++){
+            if(!revisions[i].startsWith("#") && revisions[i].length()>2){
+
+                String[] values = revisions[i].split("::");
+                for(int j = 0 ; j < values.length ; j++){
+                    if(values[j].startsWith("\"") && values[j].endsWith("\"")){
+                        values[j] = values[j].substring(1,values[j].length()-1);
+                    }
+                }
+
+                Revision revision = new Revision();
+
+                revision.setWirePM(values[1]);
+                revision.setTwistSK(values[2]);
+                revision.setDoublePM(values[3]);
+                revision.setDoubleSK(values[4]);
+                revision.setTwistPM(values[5]);
+                revision.setWireSK(values[6]);
+
+                revisionMap.put(values[0],revision);
+            }
+        }
+        return revisionMap;
+    }
+
+    public static String convertToRevisionText(String hash,Revision revision){
+        return "\""+hash+"\""+"::"+"\""+revision.getWirePM()+"\""+"::"+"\""+revision.getWireSK()+"\""+"::"+"\""+revision.getDoublePM()+"\""+"::"+"\""+revision.getDoubleSK()+"\""+"::"+"\""+revision.getTwistPM()+"\""+"::"+"\""+revision.getTwistSK()+"\"";
+    }
+
+
 }

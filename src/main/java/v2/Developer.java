@@ -95,7 +95,7 @@ public class Developer {
         try{
             CuttingDataCompact cuttingDataCompact = new CuttingDataCompact("uploads/1020/newMAXSKPM.xlsx");
             cuttingDataCompact.initializeData();
-            cuttingDataCompact.exportData("uploads/cuttingData.xlsx","cuttingData");
+            cuttingDataCompact.exportData("uploads/testRevision.xlsx","cuttingData");
 //            cuttingDataCompact.exportData("uploads/cuttingDataCompacted2.xlsx","compactedData");
         }catch (Exception e){
             System.out.println(e);
