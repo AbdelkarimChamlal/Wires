@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class Developer {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 //          let us develop some CompatibilityDetector
 //          testing the compatibilityDetector
@@ -93,12 +93,12 @@ public class Developer {
 //        }
 
         try{
-            CuttingDataCompact cuttingDataCompact = new CuttingDataCompact("uploads/1020/newMAXSKPM.xlsx");
+            CuttingDataCompact cuttingDataCompact = new CuttingDataCompact("uploads/cuttingData.xlsx");
             cuttingDataCompact.initializeData();
             cuttingDataCompact.exportData("uploads/testRevision.xlsx","cuttingData");
-//            cuttingDataCompact.exportData("uploads/cuttingDataCompacted2.xlsx","compactedData");
         }catch (Exception e){
             System.out.println(e);
+            throw e;
         }
 
     }

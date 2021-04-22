@@ -47,7 +47,14 @@ public class RegUtil {
         Matcher m = p.matcher(PM);
 
         if(m.find())return m.group(2);
+        return "";
+    }
 
+    public static String extractCustomerPart(String PM){
+        Pattern p = Pattern.compile("([^_]*)_([A-Za-z0-9]*)");
+        Matcher m = p.matcher(PM);
+
+        if(m.find())return m.group(1);
         return "";
     }
 }

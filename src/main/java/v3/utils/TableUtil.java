@@ -69,4 +69,12 @@ public class TableUtil {
         table.getRows().remove(rowIndex);
     }
 
+    public static Table duplicateTable(Table table){
+        Table duplicatedTable = new Table();
+        for(Row row:table.getRows()){
+            duplicatedTable.getRows().add(RowUtil.duplicateRow(row));
+        }
+        return duplicatedTable;
+    }
+
 }

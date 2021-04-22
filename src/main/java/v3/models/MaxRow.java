@@ -19,6 +19,7 @@ public class MaxRow implements Row {
     List<String> values;
     List<String> columns;
 
+
     public void setValues(List<String> values) {
         this.values = values;
     }

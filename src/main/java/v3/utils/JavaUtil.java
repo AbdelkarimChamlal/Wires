@@ -54,10 +54,16 @@ public class JavaUtil {
         StringBuilder stringBuilder = new StringBuilder();
 
         for(int i = 0 ; i < values.size() ; i++){
+            if(values.get(i).equals("")){
+                values.set(i,"-");
+            }
             String max = values.get(0);
             int maxPosition = 0;
 
             for(int j = 0 ; j < values.size() ; j++){
+                if(values.get(j).equals("")){
+                    values.set(j,"-");
+                }
                 if(stringCompare(max,values.get(j))<0){
                     max = values.get(j);
                     maxPosition = j;
@@ -75,6 +81,9 @@ public class JavaUtil {
         StringBuilder stringBuilder = new StringBuilder();
 
         for(String value:values){
+            if(value.equals("")){
+                value="-";
+            }
             stringBuilder.append(value);
         }
 
@@ -85,11 +94,28 @@ public class JavaUtil {
         return new ArrayList<>(Arrays.asList(values));
     }
 
-    public static Table duplicateTable(Table table){
-        Table duplicatedTable = new Table();
-        for(Row row:table.getRows()){
-            duplicatedTable.getRows().add(RowUtil.duplicateRow(row));
+    public static int getLatestRevisionCode(List<String> revisionsCode){
+        List<Integer> revisionsOrder = new ArrayList<>();
+
+        for(String revisionCode:revisionsCode){
+            StringBuilder stringBuilder = new StringBuilder();
+            for(int i = 0 ; i < revisionCode.length() ; i ++){
+                if(revisionCode.charAt(i)<48 || revisionCode.charAt(i)>57){
+                    break;
+                }else{
+                    stringBuilder.append(revisionCode.charAt(i));
+                }
+            }
+            if(stringBuilder.length()>0)
+            revisionsOrder.add(Integer.parseInt(stringBuilder.toString()));
         }
-        return duplicatedTable;
+
+        int result = 0;
+        for(Integer revisionOrder:revisionsOrder){
+            if(revisionOrder>result) result = revisionOrder;
+        }
+
+        return result;
     }
+
 }

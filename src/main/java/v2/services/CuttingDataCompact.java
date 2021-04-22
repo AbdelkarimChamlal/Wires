@@ -80,7 +80,6 @@ public class CuttingDataCompact {
 
             String hash = DigestUtils.sha256Hex(hashText);
 
-
             if(!revisionMap.containsKey(hash)){
 
                 if(maxWireList.get(i).get(wireTypePosition).equalsIgnoreCase("Twisted Wire")){
@@ -113,6 +112,18 @@ public class CuttingDataCompact {
                     }
                 }
 
+
+
+                int lastRevisionCode = RevisionsUtil.getLastRevision(revisionMap,maxWireList.get(i).get(wirePM));
+                lastRevisionCode++;
+
+                String currentPM = maxWireList.get(i).get(wirePM);
+                String customerPart = RegUtil.extractCustomerPart(currentPM);
+                //TODO this needs more logic in case it doesn't end with A
+                String newPM = customerPart + "_" + lastRevisionCode +"A";
+
+                maxWireList.get(i).set(wirePM,newPM);
+
                 Revision revision = new Revision();
                 revision.setWirePM(maxWireList.get(i).get(wirePM));
                 revision.setWireSK(maxWireList.get(i).get(wireSK));
@@ -120,6 +131,7 @@ public class CuttingDataCompact {
                 revision.setDoubleSK(maxWireList.get(i).get(doubleSK));
                 revision.setTwistPM(maxWireList.get(i).get(twistPM));
                 revision.setTwistSK(maxWireList.get(i).get(twistSK));
+                revisionMap.put(hash,revision);
                 RevisionsUtil.addRevision("projectNameRevisions",hash,revision);
 
             }else{
@@ -132,8 +144,8 @@ public class CuttingDataCompact {
                 maxWireList.get(i).set(doublePM,revision.getDoublePM());
                 maxWireList.get(i).set(doubleSK,revision.getDoubleSK());
 
-                }
             }
+        }
     }
 
 
