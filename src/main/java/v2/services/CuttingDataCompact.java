@@ -4,7 +4,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import v2.exceptions.TemplateNotValid;
 import v2.models.Revision;
 import v2.utils.*;
-import v3.utils.JavaUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,14 +68,14 @@ public class CuttingDataCompact {
             List<String> from = maxWireListOriginal.get(i).subList(fromStart,toStart);
             List<String> to = maxWireListOriginal.get(i).subList(toStart,maxWireListOriginal.get(0).size());
 
-            String concatWireInf = JavaUtil.concat(wireInf);
-            String concatFrom = JavaUtil.concat(from);
-            String concatTo = JavaUtil.concat(to);
+            String concatWireInf = JavaUtils.concat(wireInf);
+            String concatFrom = JavaUtils.concat(from);
+            String concatTo = JavaUtils.concat(to);
 
             List<String> temp = new ArrayList<>();
             temp.add(concatFrom);
             temp.add(concatTo);
-            String hashText = concatWireInf + JavaUtil.sortAndConcat(temp);
+            String hashText = concatWireInf + JavaUtils.sortAndConcat(temp);
 
             String hash = DigestUtils.sha256Hex(hashText);
 
@@ -89,7 +88,7 @@ public class CuttingDataCompact {
                 }
 
                 if(maxWireList.get(i).get(fromCrimpingType).equalsIgnoreCase("double")){
-                    String sortAndConcat = JavaUtil.sortAndConcat(JavaUtil.convertArrayToList(new String[] {
+                    String sortAndConcat = JavaUtils.sortAndConcat(JavaUtils.convertArrayToList(new String[] {
                             maxWireList.get(i).get(wireCostumerName),
                             maxWireList.get(i).get(fromCrimpingDouble)
                     }));
@@ -101,7 +100,7 @@ public class CuttingDataCompact {
                 }
 
                 if(maxWireList.get(i).get(toCrimpingType).equalsIgnoreCase("double")){
-                    String sortAndConcat = JavaUtil.sortAndConcat(JavaUtil.convertArrayToList(new String[] {
+                    String sortAndConcat = JavaUtils.sortAndConcat(JavaUtils.convertArrayToList(new String[] {
                             maxWireList.get(i).get(wireCostumerName),
                             maxWireList.get(i).get(toCrimpingDouble)
                     }));

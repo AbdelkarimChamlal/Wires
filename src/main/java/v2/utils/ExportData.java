@@ -7,6 +7,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 /**
@@ -83,5 +86,9 @@ public class ExportData {
         FileOutputStream outputStream =  new FileOutputStream(fileName);
         workbook.write(outputStream);
         outputStream.close();
+    }
+
+    public static void appendTextToFile(String filePath,String text) throws IOException {
+        Files.write(Paths.get(filePath), ("\n"+text).getBytes(), StandardOpenOption.APPEND);
     }
 }

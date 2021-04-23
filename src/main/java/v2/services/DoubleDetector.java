@@ -4,7 +4,6 @@ import v2.helpers.Values;
 import v2.utils.ExportData;
 import v2.utils.ImportData;
 import v2.utils.RowUtil;
-import v2.helpers.Values;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,15 @@ public class DoubleDetector {
     public DoubleDetector(String maxWiresList, String crimpingReport) throws IOException {
         this.crimpingTable = ImportData.importWorkSheet(crimpingReport, CRIMPING_ORDER_IN_SHEET);
         this.maxTable = ImportData.importWorkSheet(maxWiresList,MAX_ORDER_IN_SHEET);
+    }
+
+    public void updateCrimping(){
+        for(int i =0; i < crimpingTable.size() ; i++){
+            if(crimpingTable.get(i).get(crimpingTable.get(0).size()-1).equals("should not exist")){
+                crimpingTable.remove(i);
+                i--;
+            }
+        }
     }
 
 
