@@ -4,7 +4,7 @@ import v3.data.ConvertData;
 import v3.data.ImportData;
 import v3.interfaces.Table;
 import v3.models.Template;
-import v3.primitiveModels.Row;
+import v3.standards.Row;
 
 import java.io.IOException;
 
@@ -41,8 +41,8 @@ public class TemplateUtil {
         return true;
     }
 
-    public static v3.primitiveModels.Table setTemplate(Table table, Template template){
-        v3.primitiveModels.Table convertedTable = new v3.primitiveModels.Table();
+    public static v3.standards.Table setTemplate(Table table, Template template){
+        v3.standards.Table convertedTable = new v3.standards.Table();
         Row header = new Row();
         header.setValues(template.getColumns());
         convertedTable.getRows().add(header);

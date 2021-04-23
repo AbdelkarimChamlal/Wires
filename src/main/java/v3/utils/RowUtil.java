@@ -1,6 +1,6 @@
 package v3.utils;
 
-import v3.primitiveModels.Row;
+import v3.standards.Row;
 
 public class RowUtil {
     public static Row duplicateRow(Row row){

@@ -12,11 +12,17 @@ import java.io.*;
 public class ImportData {
 
     public static Sheet importSheet(String filePath,int sheetOrder) throws IOException {
-        return WorkbookFactory.create(new File(filePath)).getSheetAt(sheetOrder);
+        Workbook workbook = WorkbookFactory.create(new File(filePath));
+        Sheet sheet = workbook.getSheetAt(sheetOrder);
+        workbook.close();
+        return sheet;
     }
 
     public static Sheet importSheet(String filePath,String sheetName) throws IOException {
-        return WorkbookFactory.create(new File(filePath)).getSheet(sheetName);
+        Workbook workbook = WorkbookFactory.create(new File(filePath));
+        Sheet sheet = workbook.getSheet(sheetName);
+        workbook.close();
+        return sheet;
     }
 
     public static String importText(String filePath) throws IOException {

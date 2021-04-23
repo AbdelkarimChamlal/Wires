@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import v3.models.Configs;
 import v3.interfaces.Table;
-import v3.models.DoubleRow;
+import v3.models.CrimpingRow;
 import v3.models.MaxRow;
 import v3.models.Revision;
 
@@ -26,11 +26,11 @@ public class ConvertData {
      * @return a 2D array in table format
      */
     public static Table convertSheetIntoTable(Sheet sheet){
-        Table table = new v3.primitiveModels.Table();
+        Table table = new v3.standards.Table();
         Iterator<Row> rowIterator = sheet.rowIterator();
         while(rowIterator.hasNext()){
             Row row = rowIterator.next();
-            v3.primitiveModels.Row row1 = new v3.primitiveModels.Row();
+            v3.standards.Row row1 = new v3.standards.Row();
             for(int i =0;i<row.getLastCellNum() ; i++){
                 try{
                     Cell cell = row.getCell(i);
@@ -66,9 +66,9 @@ public class ConvertData {
         return configs;
     }
 
-    public static void fillSheetWithTable(Sheet sheet, v3.primitiveModels.Table table){
+    public static void fillSheetWithTable(Sheet sheet, v3.standards.Table table){
         int rowOrder = 0;
-        for (v3.primitiveModels.Row row:table.getRows()){
+        for (v3.standards.Row row:table.getRows()){
             Row rowInSheet = sheet.createRow(rowOrder);
             rowOrder++;
             int cellOrder = 0;
@@ -80,7 +80,7 @@ public class ConvertData {
         }
     }
 
-    public static MaxRow convertRowIntoMaxRow(v3.primitiveModels.Row row, Configs maxConfigs, List<String> columns){
+    public static MaxRow convertRowIntoMaxRow(v3.standards.Row row, Configs maxConfigs, List<String> columns){
         MaxRow maxRow = new MaxRow();
 
         maxRow.setModuleName(row.getValue(columns.indexOf(maxConfigs.getConfigValue("moduleName"))));
@@ -101,20 +101,20 @@ public class ConvertData {
         return maxRow;
     }
 
-    public static DoubleRow convertRowIntoDoubleRow(v3.primitiveModels.Row row, Configs crimpingConfigs, List<String> columns){
-        DoubleRow doubleRow = new DoubleRow();
+    public static CrimpingRow convertRowIntoDoubleRow(v3.standards.Row row, Configs crimpingConfigs, List<String> columns){
+        CrimpingRow crimpingRow = new CrimpingRow();
 
-        doubleRow.setConnectorName(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("connectorName"))));
-        doubleRow.setCavity(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("cavity"))));
-        doubleRow.setWireCustomerName(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("wireCustomerName"))));
-        doubleRow.setCrimpingType(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("crimpingType"))));
-        doubleRow.setWireFM(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("wireFM"))));
-        doubleRow.setCrimpingDouble(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("crimpingDouble"))));
+        crimpingRow.setConnectorName(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("connectorName"))));
+        crimpingRow.setCavity(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("cavity"))));
+        crimpingRow.setWireCustomerName(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("wireCustomerName"))));
+        crimpingRow.setCrimpingType(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("crimpingType"))));
+        crimpingRow.setWireFM(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("wireFM"))));
+        crimpingRow.setCrimpingDouble(row.getValue(columns.indexOf(crimpingConfigs.getConfigValue("crimpingDouble"))));
 
-        doubleRow.setColumns(columns);
-        doubleRow.setValues(row.getValues());
+        crimpingRow.setColumns(columns);
+        crimpingRow.setValues(row.getValues());
 
-        return doubleRow;
+        return crimpingRow;
     }
 
     public static String convertToRevisionText(String hash, Revision revision){

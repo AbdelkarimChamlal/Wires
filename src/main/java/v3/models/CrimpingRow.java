@@ -1,10 +1,9 @@
 package v3.models;
 
 import v3.interfaces.Row;
-
 import java.util.List;
 
-public class DoubleRow implements Row {
+public class CrimpingRow implements Row {
     List<String> values;
     List<String> columns;
     String connectorName;

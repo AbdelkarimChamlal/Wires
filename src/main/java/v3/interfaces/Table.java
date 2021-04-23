@@ -1,11 +1,11 @@
 package v3.interfaces;
 
 import java.util.List;
-import v3.primitiveModels.Row;
+import v3.standards.Row;
 
 public interface Table {
 
-    public List<Row> getRows();
-    public void setRows(Table table);
+    List<Row> getRows();
+    void setRows(Table table);
 
 }

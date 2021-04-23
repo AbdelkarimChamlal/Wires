@@ -1,7 +1,6 @@
 package v3.models;
 
 import v3.interfaces.Row;
-
 import java.util.List;
 
 public class MaxRow implements Row {

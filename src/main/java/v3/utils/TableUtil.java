@@ -1,7 +1,10 @@
 package v3.utils;
 
-import v3.primitiveModels.Row;
-import v3.primitiveModels.Table;
+import v3.data.ConvertData;
+import v3.data.ImportData;
+import v3.models.Configs;
+import v3.standards.Row;
+import v3.standards.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +78,20 @@ public class TableUtil {
             duplicatedTable.getRows().add(RowUtil.duplicateRow(row));
         }
         return duplicatedTable;
+    }
+
+    public static v3.interfaces.Table importTableUsingConfigurations(String filePath, Configs configs,String tableName) throws Exception {
+        try{
+            v3.interfaces.Table table;
+            if(configs.getConfigValue("importBy").equals("ORDER")){
+                table = ConvertData.convertSheetIntoTable(ImportData.importSheet(filePath,Integer.parseInt(configs.getConfigValue("importByValue"))));
+            }else{
+                table = ConvertData.convertSheetIntoTable(ImportData.importSheet(filePath,configs.getConfigValue("importByValue")));
+            }
+            return table;
+        }catch(Exception e){
+            throw new Exception("FAILED TO EXTRACT "+tableName+" SHEET FOLLOWING THE CONFIGURATIONS");
+        }
     }
 
 }

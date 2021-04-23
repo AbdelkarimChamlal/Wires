@@ -1,8 +1,6 @@
 package v3.models;
 
 import v3.interfaces.Table;
-import v3.utils.JavaUtil;
-import v3.utils.RowUtil;
 import v3.utils.TableUtil;
 
 import java.util.ArrayList;
@@ -13,13 +11,14 @@ import java.util.Map;
 public class PlausibilityTable {
     Table plausibilityTable;
     Map<String,Plausibility> plausibilityItemsMap;
+    Configs plausibilityConfigs;
 
-    public PlausibilityTable(v3.interfaces.Table table){
+    public PlausibilityTable(v3.interfaces.Table table,Configs plausibilityConfigs){
         this.plausibilityTable = table;
+        this.plausibilityConfigs = plausibilityConfigs;
         formatPlausibilityTable();
         this.plausibilityItemsMap = new HashMap<>();
         convertTableRowsIntoPlausibilityItems();
-
     }
 
     public void formatPlausibilityTable(){
@@ -53,12 +52,9 @@ public class PlausibilityTable {
                     plausibilityMap.put(plausibilityTable.getRows().get(i).getValue(j), new ArrayList<>());
                 }
                 plausibilityMap.get(plausibilityTable.getRows().get(i).getValue(j)).add(plausibilityTable.getRows().get(0).getValue(j));
-
             }
-
             plausibility.setPlausibilityMap(plausibilityMap);
             plausibilityItemsMap.put(plausibility.getFM(),plausibility);
-            System.out.println(plausibility.getPlausibilityMap());
         }
     }
 }

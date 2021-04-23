@@ -2,9 +2,8 @@ package v3.models;
 
 import v3.data.ConvertData;
 import v3.interfaces.Table;
-import v3.primitiveModels.Row;
+import v3.standards.Row;
 import v3.utils.TemplateUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class MaxTable {
     }
 
     public Table convertToTable(){
-        Table table = new v3.primitiveModels.Table();
+        Table table = new v3.standards.Table();
 
 
 

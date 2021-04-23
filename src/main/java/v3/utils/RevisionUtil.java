@@ -1,6 +1,5 @@
 package v3.utils;
 
-import v2.utils.Convertor;
 import v3.data.ConvertData;
 import v3.data.ExportData;
 import v3.data.ImportData;

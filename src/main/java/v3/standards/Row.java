@@ -1,4 +1,4 @@
-package v3.primitiveModels;
+package v3.standards;
 
 import java.util.ArrayList;
 import java.util.List;

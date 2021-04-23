@@ -55,7 +55,7 @@ public class CuttingDataCompact {
 
         int fromStart = maxWireListOriginal.get(0).indexOf("From Connector (long name)");
         int toStart = maxWireListOriginal.get(0).indexOf("To Connector (long name)");
-
+        int wireType = maxWireListOriginal.get(0).indexOf("Wire Type");
 
 
         Map<String,Revision> revisionMap = RevisionsUtil.loadRevisions("projectNameRevisions");
@@ -64,7 +64,7 @@ public class CuttingDataCompact {
         for(int i = 1 ; i < maxWireList.size() ; i++){
             boolean finalPMUpdated = false;
 
-            List<String> wireInf = maxWireListOriginal.get(i).subList(0,fromStart);
+            List<String> wireInf = maxWireListOriginal.get(i).subList(wireType,fromStart);
             List<String> from = maxWireListOriginal.get(i).subList(fromStart,toStart);
             List<String> to = maxWireListOriginal.get(i).subList(toStart,maxWireListOriginal.get(0).size());
 
