@@ -120,4 +120,8 @@ public class JavaUtil {
         return result;
     }
 
+    public static List<String> duplicateList(List<String> values){
+        return new ArrayList<>(values);
+    }
+
 }

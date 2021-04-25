@@ -8,6 +8,19 @@ import java.util.List;
  */
 public class Table implements v3.interfaces.Table {
     List<Row> rows;
+    List<String> columns;
+
+    public void setRows(List<Row> rows) {
+        this.rows = rows;
+    }
+
+    public List<String> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(List<String> columns) {
+        this.columns = columns;
+    }
 
     public List<Row> getRows() {
         return rows;

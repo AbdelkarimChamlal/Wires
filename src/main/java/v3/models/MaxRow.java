@@ -1,6 +1,5 @@
 package v3.models;
 
-import org.apache.commons.math3.analysis.function.Max;
 import v3.interfaces.Row;
 import v3.utils.JavaUtil;
 
@@ -22,20 +21,7 @@ public class MaxRow implements Row {
     List<String> columns;
 
     // TODO override the clone method
-//    @Override
-//    public MaxRow clone(){
-//        MaxRow maxRow = new MaxRow();
-//        maxRow.setValues(this.getValues());
-//        maxRow.setColumns();
-//        maxRow.setFromSource();
-//        maxRow.setFromCavity();
-//        maxRow.setFromCrimpingType();
-//        maxRow.setModuleName();
-//        maxRow.setModulePIN();
-//        maxRow.setFromCrimpingDouble();
-//
-//        return maxRow;
-//    }
+
 
     @Override
     public String toString(){
