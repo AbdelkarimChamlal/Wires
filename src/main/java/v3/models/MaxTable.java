@@ -20,12 +20,18 @@ public class MaxTable {
         this.maxTemplate = template;
         this.rows = table.getRows();
         this.headerPosition = Integer.parseInt(this.maxConfigs.getConfigValue("headerPosition"));
-        if(!TemplateUtil.matchTableToTemplate(rows.get(headerPosition),maxTemplate)){
-            throw new Exception("the provided table doesn't match the max template");
-        }
+        TemplateUtil.matchTableToTemplate(rows.get(headerPosition),maxTemplate);
         this.columns = this.rows.get(headerPosition).getValues();
         this.maxRows = convertRowsToMaxRows();
         maxRows.remove(headerPosition);
+    }
+
+    public List<MaxRow> getMaxRows() {
+        return maxRows;
+    }
+
+    public void setMaxRows(List<MaxRow> maxRows) {
+        this.maxRows = maxRows;
     }
 
     public List<MaxRow> convertRowsToMaxRows(){
@@ -44,6 +50,22 @@ public class MaxTable {
 
         return table;
     }
+
+    public List<MaxRow> rowsWithSameSourceInBothDirections(String source){
+        List<MaxRow> maxRows = new ArrayList<>();
+        for(MaxRow maxRow:this.getMaxRows()){
+            if(maxRow.getToSource().equals(source) || maxRow.getFromSource().equals(source)){
+                maxRows.add(maxRow);
+            }
+        }
+        return maxRows;
+    }
+
+    public List<String> getColumns(){
+        return this.columns;
+    }
+
+
 
 
 

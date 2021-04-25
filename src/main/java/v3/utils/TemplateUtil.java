@@ -34,9 +34,11 @@ public class TemplateUtil {
         return template;
     }
 
-    public static boolean matchTableToTemplate(Row tableHeader,Template template){
+    public static boolean matchTableToTemplate(Row tableHeader,Template template) throws Exception {
         for(String templateColumn:template.getColumns()){
-            if(!tableHeader.containsValue(templateColumn))return false;
+            if(!tableHeader.containsValue(templateColumn)){
+                throw new Exception("the provided table doesn't match the max template, missing columns is : "+templateColumn);
+            }
         }
         return true;
     }

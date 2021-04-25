@@ -1,5 +1,7 @@
 package v3.utils;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +46,10 @@ public class JavaUtil {
     public static boolean createNewDirectory(String path,String name){
         File newDirectory = new File(path+name);
         return newDirectory.mkdir();
+    }
+
+    public static String hashString(String string){
+        return DigestUtils.sha256Hex(string);
     }
 
     public static String sortAndConcat(List<String> values){

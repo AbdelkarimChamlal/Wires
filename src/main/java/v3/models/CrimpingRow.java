@@ -1,6 +1,8 @@
 package v3.models;
 
 import v3.interfaces.Row;
+import v3.utils.JavaUtil;
+
 import java.util.List;
 
 public class CrimpingRow implements Row {
@@ -12,6 +14,17 @@ public class CrimpingRow implements Row {
     String wireFM;
     String crimpingType;
     String crimpingDouble;
+    String comment;
+
+
+    public String getPrimaryKey(){
+        return JavaUtil.hashString(this.toString());
+    }
+
+    @Override
+    public String toString(){
+        return "connectorName="+connectorName+",cavity="+cavity+",wireCustomerName="+wireCustomerName+",wireFM="+wireFM+",crimpingType="+crimpingType+",crimpingDouble="+crimpingDouble;
+    }
 
     public void setValues(List<String> values) {
         this.values = values;

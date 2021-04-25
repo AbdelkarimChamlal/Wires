@@ -13,6 +13,15 @@ public class CrimpingTable {
     Template crimpingTemplate;
     int headerPosition;
     List<Row> rows;
+
+    public List<CrimpingRow> getCrimpingRows() {
+        return crimpingRows;
+    }
+
+    public void setCrimpingRows(List<CrimpingRow> crimpingRows) {
+        this.crimpingRows = crimpingRows;
+    }
+
     List<CrimpingRow> crimpingRows;
     List<String> columns;
 
@@ -29,7 +38,7 @@ public class CrimpingTable {
     }
 
 
-    public List<CrimpingRow> convertRowsToDoubleRows(){
+    List<CrimpingRow> convertRowsToDoubleRows(){
         List<CrimpingRow> crimpingRows = new ArrayList<>();
         for(Row row : rows){
             crimpingRows.add(ConvertData.convertRowIntoDoubleRow(row,crimpingConfigs,columns));
