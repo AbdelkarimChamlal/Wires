@@ -161,8 +161,74 @@ public class TestingArea {
         });
 
         table.getRow(0).addValue("Join Diversity");
+
+        // check if a twisted wire goes into different joins
+        // in this case the join diversity should be called something like join1-join2-wires
+
+        // important index
+        int wireTypePosition = table.getRow(0).getValues().indexOf("Wire Type");
+        int wireSpecialWiresPosition = table.getRow(0).getValues().indexOf("Wire Special Wires");
+        int joinDiversity = table.getRow(0).getValues().indexOf("Join Diversity");
+        int toSourcePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("toSource"));
+        int fromSourcePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("fromSource"));
+
+        // extract twisted wires
+        List<Row> twistedWires = getTwistedWires(table.getRows(),wireTypePosition);
+        // collect unique twists
+        List<String> uniqueTwists = getUniqueTwists(table.getRows(),wireSpecialWiresPosition);
+        // for each unique twist
+        uniqueTwists.forEach( twist ->{
+            // get rows with this twist
+            List<Row> twistRows = getTwistsByWireSpecialWires(twistedWires,twist,wireSpecialWiresPosition);
+            // collect all joins connected to this twist
+            List<String> twistJoins = extractTwistJoins(twistRows,toSourcePosition,fromSourcePosition);
+            // if there are joins connected to this twist
+            if(twistJoins.size()>0){
+                // update the value of joinDiversity to the sortedAndConcatenated Value of all joins
+                String joinsSortedAndConcatenated = JavaUtil.sortAndConcat(twistJoins);
+                twistRows.forEach(twistRow ->{
+                    String[] diversityParts = twistRow.getValue(joinDiversity).split("-");
+                    twistRow.getValues().set(joinDiversity,joinsSortedAndConcatenated +"-"+diversityParts[1]);
+                });
+            }
+        });
+
+
         // export the spliced table
         ExportData.exportTableToExcel("results/spliced.xlsx","spliced",table);
+    }
+
+    public static List<String> extractTwistJoins(List<Row> rows,int toSource,int fromSource){
+        List<String> twistJoins = new ArrayList<>();
+        rows.forEach(row->{
+            if(row.getValue(toSource).startsWith("J") && !twistJoins.contains(row.getValue(toSource)))twistJoins.add(row.getValue(toSource));
+            if(row.getValue(fromSource).startsWith("J") && !twistJoins.contains(row.getValue(fromSource)))twistJoins.add(row.getValue(fromSource));
+        });
+        return twistJoins;
+    }
+
+    public static List<Row> getTwistsByWireSpecialWires(List<Row> rows,String wireSpecialWiresValue,int wireSpecialWiresPosition){
+        List<Row> twist = new ArrayList<>();
+        rows.forEach( row ->{
+            if(row.getValue(wireSpecialWiresPosition).equals(wireSpecialWiresValue))twist.add(row);
+        });
+        return twist;
+    }
+
+    public static List<String> getUniqueTwists(List<Row> twistedRows,int wireSpecialWiresPosition){
+        List<String> uniqueTwists = new ArrayList<>();
+        twistedRows.forEach(twistedRow ->{
+            if(!uniqueTwists.contains(twistedRow.getValue(wireSpecialWiresPosition)))uniqueTwists.add(twistedRow.getValue(wireSpecialWiresPosition));
+        });
+        return uniqueTwists;
+    }
+
+    public static List<Row> getTwistedWires(List<Row> rows,int wireTypePosition){
+        List<Row> twistedWires = new ArrayList<>();
+        rows.forEach(row ->{
+            if(row.getValue(wireTypePosition).equals("Twisted Wire")) twistedWires.add(row);
+        });
+        return twistedWires;
     }
 
     public static void fillColumnWithValue(List<Row> rows,int columnPosition,String value){
