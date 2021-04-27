@@ -139,7 +139,7 @@ public class TestingArea {
 
                 // add this diversity rows to the output table
                 rows.forEach(row ->{
-                    row.addValue(s+"-"+d);
+                    row.addValue(s+" <-> "+d);
                     table.addRow(row);
                 });
             });
@@ -166,11 +166,43 @@ public class TestingArea {
         // in this case the join diversity should be called something like join1-join2-wires
 
         // important index
-        int wireTypePosition = table.getRow(0).getValues().indexOf("Wire Type");
-        int wireSpecialWiresPosition = table.getRow(0).getValues().indexOf("Wire Special Wires");
-        int joinDiversity = table.getRow(0).getValues().indexOf("Join Diversity");
+        int wireTypePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("wireType"));
+        int wireSpecialWiresPosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("wireSpecialWire"));
         int toSourcePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("toSource"));
         int fromSourcePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("fromSource"));
+        int joinDiversity = table.getRow(0).getValues().indexOf("Join Diversity");
+
+        // combine joins that are connected to each other
+        List<String> combinedJoins = new ArrayList<>();
+        joins.forEach(join ->{
+            StringBuilder combinedJoin = new StringBuilder(join);
+            table.getRows().forEach(row ->{
+                if(combinedJoin.toString().contains(row.getValue(toSourcePosition)) && row.getValue(fromSourcePosition).startsWith("J")){
+                    if(!combinedJoin.toString().contains(row.getValue(fromSourcePosition))){
+                        combinedJoin.append("&").append(row.getValue(fromSourcePosition));
+                    }
+                }
+                if(combinedJoin.toString().contains(row.getValue(fromSourcePosition)) && row.getValue(toSourcePosition).startsWith("J")){
+                    if(!combinedJoin.toString().contains(row.getValue(toSourcePosition))){
+                        combinedJoin.append("&").append(row.getValue(toSourcePosition));
+                    }
+                }
+            });
+            String finalCombination = JavaUtil.sortAndConcatWithValue(JavaUtil.convertArrayToList(combinedJoin.toString().split("&"))," - ");
+            if (!combinedJoins.contains(finalCombination))combinedJoins.add(finalCombination);
+        });
+
+        table.getRows().forEach(row -> {
+            if(!row.getValue(joinDiversity).equals("-")){
+                String[] diversityParts = row.getValue(joinDiversity).split(" <-> ");
+                combinedJoins.forEach(combinedJoin->{
+                    if(combinedJoin.contains(diversityParts[0])){
+                        row.getValues().set(joinDiversity,combinedJoin +" <-> "+diversityParts[1]);
+                    }
+                });
+            }
+        });
+
 
         // extract twisted wires
         List<Row> twistedWires = getTwistedWires(table.getRows(),wireTypePosition);
@@ -182,13 +214,20 @@ public class TestingArea {
             List<Row> twistRows = getTwistsByWireSpecialWires(twistedWires,twist,wireSpecialWiresPosition);
             // collect all joins connected to this twist
             List<String> twistJoins = extractTwistJoins(twistRows,toSourcePosition,fromSourcePosition);
+            // get the combination of joins for those joins
+            List<String> twistJoinsCombined = new ArrayList<>();
+            twistJoins.forEach(twistJoin ->{
+                combinedJoins.forEach(combinedJoin->{
+                    if(combinedJoin.contains(twistJoin) && !twistJoinsCombined.contains(combinedJoin))twistJoinsCombined.add(combinedJoin);
+                });
+            });
             // if there are joins connected to this twist
-            if(twistJoins.size()>0){
+            if(twistJoinsCombined.size()>0){
                 // update the value of joinDiversity to the sortedAndConcatenated Value of all joins
-                String joinsSortedAndConcatenated = JavaUtil.sortAndConcat(twistJoins);
+                String joinsSortedAndConcatenated = JavaUtil.sortAndConcatWithValue(twistJoinsCombined," / ");
                 twistRows.forEach(twistRow ->{
-                    String[] diversityParts = twistRow.getValue(joinDiversity).split("-");
-                    twistRow.getValues().set(joinDiversity,joinsSortedAndConcatenated +"-"+diversityParts[1]);
+                    String[] diversityParts = twistRow.getValue(joinDiversity).split(" <-> ");
+                    twistRow.getValues().set(joinDiversity,joinsSortedAndConcatenated +" <-> "+diversityParts[1]);
                 });
             }
         });
@@ -198,11 +237,16 @@ public class TestingArea {
         ExportData.exportTableToExcel("results/spliced.xlsx","spliced",table);
     }
 
+
+
     public static List<String> extractTwistJoins(List<Row> rows,int toSource,int fromSource){
         List<String> twistJoins = new ArrayList<>();
         rows.forEach(row->{
-            if(row.getValue(toSource).startsWith("J") && !twistJoins.contains(row.getValue(toSource)))twistJoins.add(row.getValue(toSource));
-            if(row.getValue(fromSource).startsWith("J") && !twistJoins.contains(row.getValue(fromSource)))twistJoins.add(row.getValue(fromSource));
+            if(row.getValue(toSource).startsWith("J") && !twistJoins.contains(row.getValue(toSource))){
+                twistJoins.add(row.getValue(toSource));
+            }else if(row.getValue(fromSource).startsWith("J") && !twistJoins.contains(row.getValue(fromSource))){
+                twistJoins.add(row.getValue(fromSource));
+            }
         });
         return twistJoins;
     }

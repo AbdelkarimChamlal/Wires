@@ -79,6 +79,34 @@ public class JavaUtil {
         return stringBuilder.toString();
     }
 
+    public static String sortAndConcatWithValue(List<String> values,String separateValue){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for(int i = 0 ; i < values.size() ; i++){
+            if(values.get(i).equals("")){
+                values.set(i,"-");
+            }
+            String max = values.get(0);
+            int maxPosition = 0;
+
+            for(int j = 0 ; j < values.size() ; j++){
+                if(values.get(j).equals("")){
+                    values.set(j,"-");
+                }
+                if(stringCompare(max,values.get(j))>0){
+                    max = values.get(j);
+                    maxPosition = j;
+                }
+            }
+
+            stringBuilder.append(max).append(separateValue);
+            values.remove(maxPosition);
+            i--;
+        }
+        stringBuilder.delete(stringBuilder.length()-separateValue.length(),stringBuilder.length());
+        return stringBuilder.toString();
+    }
+
     public static String concat(List<String> values){
         StringBuilder stringBuilder = new StringBuilder();
 
