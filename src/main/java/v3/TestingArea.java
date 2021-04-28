@@ -19,7 +19,7 @@ import java.util.Map;
 
 
 public class TestingArea {
-    static String maxFileName = "splite.xlsx";
+    static String maxFileName = "splice.xlsx";
 
     static String crimpingFileName = "crimping.xlsx";
     static String crimpingConfigFileName = "crimping.conf";
@@ -29,6 +29,7 @@ public class TestingArea {
     static String plausibilityFileName = "plausibility.xlsm";
     static String plausibilityConfigsFileName = "plausibility.conf";
     static String resultName = "maxResult.xlsx";
+    static String separateValue = " <-> ";
 
     public static void main(String[] args) throws Exception {
 
@@ -139,7 +140,7 @@ public class TestingArea {
 
                 // add this diversity rows to the output table
                 rows.forEach(row ->{
-                    row.addValue(s+" <-> "+d);
+                    row.addValue(s+separateValue+d);
                     table.addRow(row);
                 });
             });
@@ -167,13 +168,28 @@ public class TestingArea {
 
         // important index
         int wireTypePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("wireType"));
+        int wireKeyPosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("wireKey"));
         int wireSpecialWiresPosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("wireSpecialWire"));
         int toSourcePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("toSource"));
         int fromSourcePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("fromSource"));
+        int fromCavityPosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("fromCavity"));
+        int fromCrimpingTypePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("fromCrimpingType"));
+        int fromCrimpingDoublePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("fromCrimpingDouble"));
+        int toCavityPosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("toCavity"));
+        int toCrimpingTypePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("toCrimpingType"));
+        int toCrimpingDoublePosition = table.getRow(0).getValues().indexOf(maxConfigs.getConfigValue("toCrimpingDouble"));
+
+
         int joinDiversity = table.getRow(0).getValues().indexOf("Join Diversity");
+
+
 
         // combine joins that are connected to each other
         List<String> combinedJoins = new ArrayList<>();
+
+        // finalCombination
+        List<String> finalCombinations = new ArrayList<>();
+
         joins.forEach(join ->{
             StringBuilder combinedJoin = new StringBuilder(join);
             table.getRows().forEach(row ->{
@@ -192,22 +208,24 @@ public class TestingArea {
             if (!combinedJoins.contains(finalCombination))combinedJoins.add(finalCombination);
         });
 
+
+
         table.getRows().forEach(row -> {
             if(!row.getValue(joinDiversity).equals("-")){
-                String[] diversityParts = row.getValue(joinDiversity).split(" <-> ");
+                String[] diversityParts = row.getValue(joinDiversity).split(separateValue);
                 combinedJoins.forEach(combinedJoin->{
                     if(combinedJoin.contains(diversityParts[0])){
-                        row.getValues().set(joinDiversity,combinedJoin +" <-> "+diversityParts[1]);
+                        row.getValues().set(joinDiversity,combinedJoin +separateValue+diversityParts[1]);
                     }
                 });
             }
         });
 
-
         // extract twisted wires
         List<Row> twistedWires = getTwistedWires(table.getRows(),wireTypePosition);
         // collect unique twists
         List<String> uniqueTwists = getUniqueTwists(table.getRows(),wireSpecialWiresPosition);
+
         // for each unique twist
         uniqueTwists.forEach( twist ->{
             // get rows with this twist
@@ -226,12 +244,26 @@ public class TestingArea {
                 // update the value of joinDiversity to the sortedAndConcatenated Value of all joins
                 String joinsSortedAndConcatenated = JavaUtil.sortAndConcatWithValue(twistJoinsCombined," / ");
                 twistRows.forEach(twistRow ->{
-                    String[] diversityParts = twistRow.getValue(joinDiversity).split(" <-> ");
-                    twistRow.getValues().set(joinDiversity,joinsSortedAndConcatenated +" <-> "+diversityParts[1]);
+                    String[] diversityParts = twistRow.getValue(joinDiversity).split(separateValue);
+                    String newDiv = joinsSortedAndConcatenated +separateValue+diversityParts[1];
+                    if(!finalCombinations.contains(joinsSortedAndConcatenated))finalCombinations.add(joinsSortedAndConcatenated);
+                    twistRow.getValues().set(joinDiversity,newDiv);
                 });
             }
         });
 
+
+
+
+
+        table.getRows().forEach(row ->{
+            if(!row.getValue(joinDiversity).equals("-")){
+                String comb = row.getValue(joinDiversity).split(separateValue)[0];
+                finalCombinations.forEach(finalCombination ->{
+                    if(finalCombination.contains(comb))row.getValues().set(joinDiversity,finalCombination+separateValue+row.getValue(joinDiversity).split(separateValue)[1]);
+                });
+            }
+        });
 
         // export the spliced table
         ExportData.exportTableToExcel("results/spliced.xlsx","spliced",table);
