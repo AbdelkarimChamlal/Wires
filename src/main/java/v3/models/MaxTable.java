@@ -34,6 +34,22 @@ public class MaxTable {
         this.maxRows = maxRows;
     }
 
+    public Configs getMaxConfigs() {
+        return maxConfigs;
+    }
+
+    public void setMaxConfigs(Configs maxConfigs) {
+        this.maxConfigs = maxConfigs;
+    }
+
+    public List<Row> getRows() {
+        return rows;
+    }
+
+    public void setRows(List<Row> rows) {
+        this.rows = rows;
+    }
+
     public List<MaxRow> convertRowsToMaxRows(){
         List<MaxRow> maxRows = new ArrayList<>();
         for(Row row : rows){
