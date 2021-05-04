@@ -190,13 +190,6 @@ public class SpliceMaxWireList {
         ExportData.exportTableToExcel(filePath,sheetName,this.table);
     }
 
-
-
-
-
-
-
-
     static List<String> extractTwistJoins(List<Row> rows, int toSource, int fromSource){
         List<String> twistJoins = new ArrayList<>();
         rows.forEach(row->{
