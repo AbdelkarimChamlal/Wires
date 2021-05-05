@@ -41,6 +41,9 @@ public class SpliceMaxWireList {
             }
         }
 
+        // combine joins that are connected to each other
+        List<String> combinedJoins = new ArrayList<>();
+
         // important index
         int wireTypePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireType"));
         int wireKeyPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireKey"));
@@ -55,12 +58,35 @@ public class SpliceMaxWireList {
         int toCrimpingDoublePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toCrimpingDouble"));
         int lastColumnPosition = maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("lastEssentialValue"));
 
+
+        // fill the combinedJoins list
+        joins.forEach(join ->{
+            StringBuilder combinedJoin = new StringBuilder(join);
+            maxTable.getRows().forEach(row ->{
+                if(combinedJoin.toString().contains(row.getValue(toSourcePosition)) && row.getValue(fromSourcePosition).startsWith("J")){
+                    if(!combinedJoin.toString().contains(row.getValue(fromSourcePosition))){
+                        combinedJoin.append("&").append(row.getValue(fromSourcePosition));
+                    }
+                }
+                if(combinedJoin.toString().contains(row.getValue(fromSourcePosition)) && row.getValue(toSourcePosition).startsWith("J")){
+                    if(!combinedJoin.toString().contains(row.getValue(toSourcePosition))){
+                        combinedJoin.append("&").append(row.getValue(toSourcePosition));
+                    }
+                }
+            });
+            String finalCombination = JavaUtil.sortAndConcatWithValue(JavaUtil.convertArrayToList(combinedJoin.toString().split("&"))," - ");
+            if (!combinedJoins.contains(finalCombination))combinedJoins.add(finalCombination);
+        });
+
+        System.out.println(combinedJoins);
+
+
         // generate all joins diversities
-        joins.forEach(s ->{
+        combinedJoins.forEach(s ->{
             // initialize diversities list for this join
             List<String> diversities = new ArrayList<>();
             // extract rows from max wires list connecting to this join on both ends
-            List<MaxRow> maxRows = maxTable.rowsWithSameSourceInBothDirections(s);
+            List<MaxRow> maxRows = rowsWithJoinInBothEnds(maxTable,s);
             // fill the diversities list with all different diversities
             for(int i = lastColumnPosition + 1 ; i < maxTable.getColumns().size() ; i++){
                 String diversity = getDiversity(maxRows,i);
@@ -89,20 +115,6 @@ public class SpliceMaxWireList {
             });
         });
 
-        // add the wires which are not connected to joins
-        maxTable.getMaxRows().forEach(maxRow -> {
-            // check if the source and destination are not connected to a Joint
-            if(!maxRow.getFromSource().startsWith("J") && !maxRow.getToSource().startsWith("J")){
-                // create a new row
-                Row row = new Row();
-                // give it the same values as this maxRow
-                row.setValues(maxRow.getValues());
-                // set the value of the joint diversity to -
-                row.addValue("-");
-                // add row the final table
-                table.addRow(row);
-            }
-        });
 
         // name the column which contains the join Diversities
         table.getRow(0).addValue("Join Diversity");
@@ -110,42 +122,24 @@ public class SpliceMaxWireList {
         // get its index
         int joinDiversity = table.getRow(0).getValues().indexOf("Join Diversity");
 
-        // combine joins that are connected to each other
-        List<String> combinedJoins = new ArrayList<>();
+
+
 
         // finalCombination
         List<String> finalCombinations = new ArrayList<>();
 
-        // fill the combinedJoins list
-        joins.forEach(join ->{
-            StringBuilder combinedJoin = new StringBuilder(join);
-            table.getRows().forEach(row ->{
-                if(combinedJoin.toString().contains(row.getValue(toSourcePosition)) && row.getValue(fromSourcePosition).startsWith("J")){
-                    if(!combinedJoin.toString().contains(row.getValue(fromSourcePosition))){
-                        combinedJoin.append("&").append(row.getValue(fromSourcePosition));
-                    }
-                }
-                if(combinedJoin.toString().contains(row.getValue(fromSourcePosition)) && row.getValue(toSourcePosition).startsWith("J")){
-                    if(!combinedJoin.toString().contains(row.getValue(toSourcePosition))){
-                        combinedJoin.append("&").append(row.getValue(toSourcePosition));
-                    }
-                }
-            });
-            String finalCombination = JavaUtil.sortAndConcatWithValue(JavaUtil.convertArrayToList(combinedJoin.toString().split("&"))," - ");
-            if (!combinedJoins.contains(finalCombination))combinedJoins.add(finalCombination);
-        });
 
-        // replace the joins with their combined name
-        table.getRows().forEach(row -> {
-            if(!row.getValue(joinDiversity).equals("-")){
-                String[] diversityParts = row.getValue(joinDiversity).split(separateValue);
-                combinedJoins.forEach(combinedJoin->{
-                    if(combinedJoin.contains(diversityParts[0])){
-                        row.getValues().set(joinDiversity,combinedJoin +separateValue+diversityParts[1]);
-                    }
-                });
-            }
-        });
+//        // replace the joins with their combined name
+//        table.getRows().forEach(row -> {
+//
+//            String[] diversityParts = row.getValue(joinDiversity).split(separateValue);
+//            combinedJoins.forEach(combinedJoin->{
+//                if(combinedJoin.contains(diversityParts[0])){
+//                    row.getValues().set(joinDiversity,combinedJoin +separateValue+diversityParts[1]);
+//                }
+//            });
+//
+//        });
 
         // extract twisted wires
         List<Row> twistedWires = getTwistedWires(table.getRows(),wireTypePosition);
@@ -179,44 +173,68 @@ public class SpliceMaxWireList {
 
         // update rows with the final combinations
         table.getRows().forEach(row ->{
-            if(!row.getValue(joinDiversity).equals("-")){
-                String comb = row.getValue(joinDiversity).split(separateValue)[0];
-                finalCombinations.forEach(finalCombination ->{
-                    if(finalCombination.contains(comb))row.getValues().set(joinDiversity,finalCombination+separateValue+row.getValue(joinDiversity).split(separateValue)[1]);
-                });
-            }
+
+            String comb = row.getValue(joinDiversity).split(separateValue)[0];
+            finalCombinations.forEach(finalCombination ->{
+                if(finalCombination.contains(comb))row.getValues().set(joinDiversity,finalCombination+separateValue+row.getValue(joinDiversity).split(separateValue)[1]);
+            });
+
         });
 
         Map<String,String> doubleJoinsMap = new HashMap<>();
 
         // include the double With in the join name
         table.getRows().forEach(row ->{
-            if(!row.getValue(joinDiversity).equals("-")){
-                if(row.getValue(toCrimpingTypePosition).equalsIgnoreCase("double")){
-                    List<String> temp  = new ArrayList<>();
-                    temp.add(row.getValue(wireKeyPosition));
-                    temp.add(row.getValue(toCrimpingDoublePosition));
-                    String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
-                    doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
-                }
-                if(row.getValue(fromCrimpingTypePosition).equalsIgnoreCase("double")){
-                    List<String> temp  = new ArrayList<>();
-                    temp.add(row.getValue(wireKeyPosition));
-                    temp.add(row.getValue(fromCrimpingDoublePosition));
-                    String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
-                    doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
-                }
+
+            if(row.getValue(toCrimpingTypePosition).equalsIgnoreCase("double")){
+                List<String> temp  = new ArrayList<>();
+                temp.add(row.getValue(wireKeyPosition));
+                temp.add(row.getValue(toCrimpingDoublePosition));
+                String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
+                doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
             }
+            if(row.getValue(fromCrimpingTypePosition).equalsIgnoreCase("double")){
+                List<String> temp  = new ArrayList<>();
+                temp.add(row.getValue(wireKeyPosition));
+                temp.add(row.getValue(fromCrimpingDoublePosition));
+                String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
+                doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
+            }
+
         });
 
         // update rows with doubleJoins
         table.getRows().forEach(row->{
-            if(!row.getValue(joinDiversity).equals("-") && doubleJoinsMap.containsKey(row.getValue(joinDiversity))){
+            if(doubleJoinsMap.containsKey(row.getValue(joinDiversity))){
                 row.getValues().set(joinDiversity,doubleJoinsMap.get(row.getValue(joinDiversity)));
             }
         });
 
+        // add the wires which are not connected to joins
+        maxTable.getMaxRows().forEach(maxRow -> {
+            // check if the source and destination are not connected to a Joint
+            if(!maxRow.getFromSource().startsWith("J") && !maxRow.getToSource().startsWith("J")){
+                // create a new row
+                Row row = new Row();
+                // give it the same values as this maxRow
+                row.setValues(maxRow.getValues());
+                // set the value of the joint diversity to -
+                row.addValue("-");
+                // add row the final table
+                table.addRow(row);
+            }
+        });
+    }
 
+
+    public List<MaxRow> rowsWithJoinInBothEnds(MaxTable maxTable,String source){
+        List<MaxRow> maxRows = new ArrayList<>();
+        for(MaxRow maxRow:maxTable.getMaxRows()){
+            if(source.contains(maxRow.getToSource()) || source.contains(maxRow.getFromSource()) ){
+                maxRows.add(maxRow);
+            }
+        }
+        return maxRows;
     }
 
     public void exportSplicedTable(String filePath,String sheetName) throws IOException {
