@@ -8,10 +8,7 @@ import v3.standards.Table;
 import v3.utils.JavaUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SpliceMaxWireList {
     static String separateValue = " <-> ";
@@ -25,7 +22,20 @@ public class SpliceMaxWireList {
     }
 
     public void splice(){
-        
+        // important index
+        int wireTypePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireType"));
+        int wireKeyPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireKey"));
+        int wireSpecialWiresPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireSpecialWire"));
+        int toSourcePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toSource"));
+        int fromSourcePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromSource"));
+        int fromCavityPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromCavity"));
+        int fromCrimpingTypePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromCrimpingType"));
+        int fromCrimpingDoublePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromCrimpingDouble"));
+        int toCavityPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toCavity"));
+        int toCrimpingTypePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toCrimpingType"));
+        int toCrimpingDoublePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toCrimpingDouble"));
+        int lastColumnPosition = maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("lastEssentialValue"));
+
         // collect unique joins
         List<String> joins = new ArrayList<>();
         for(MaxRow maxRow:maxTable.getMaxRows()){
@@ -43,23 +53,6 @@ public class SpliceMaxWireList {
 
         // combine joins that are connected to each other
         List<String> combinedJoins = new ArrayList<>();
-
-        // important index
-        int wireTypePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireType"));
-        int wireKeyPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireKey"));
-        int wireSpecialWiresPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("wireSpecialWire"));
-        int toSourcePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toSource"));
-        int fromSourcePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromSource"));
-        int fromCavityPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromCavity"));
-        int fromCrimpingTypePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromCrimpingType"));
-        int fromCrimpingDoublePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("fromCrimpingDouble"));
-        int toCavityPosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toCavity"));
-        int toCrimpingTypePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toCrimpingType"));
-        int toCrimpingDoublePosition = table.getRow(0).getValues().indexOf(maxTable.getMaxConfigs().getConfigValue("toCrimpingDouble"));
-        int lastColumnPosition = maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("lastEssentialValue"));
-
-
-        // fill the combinedJoins list
         joins.forEach(join ->{
             StringBuilder combinedJoin = new StringBuilder(join);
             maxTable.getRows().forEach(row ->{
@@ -78,9 +71,46 @@ public class SpliceMaxWireList {
             if (!combinedJoins.contains(finalCombination))combinedJoins.add(finalCombination);
         });
 
+        List<String> finalJoinCombinations = new ArrayList<>();
+
+        combinedJoins.forEach(combined->{
+            String[] combinationJoins = combined.split(" - ");
+            List<String> finalCombination = new ArrayList<>(Arrays.asList(combinationJoins));
+            combinedJoins.forEach(combined2 ->{
+                if(!combined.equals(combined2)){
+                    String[] combinationJoins2 = combined2.split(" - ");
+                    boolean foundCommon = false;
+
+
+                    for (String combinationJoin : combinationJoins) {
+                        for (String s : combinationJoins2) {
+                            if (combinationJoin.equals(s)) {
+                                foundCommon = true;
+                                break;
+                            }
+                        }
+                        if (foundCommon) break;
+                    }
+
+                    if(foundCommon){
+                        for(String s : combinationJoins2){
+                            if(!finalCombination.contains(s))finalCombination.add(s);
+                        }
+                    }
+
+
+                }
+            });
+
+            String temp = JavaUtil.sortAndConcatWithValue(finalCombination," - ");
+            if (!finalJoinCombinations.contains(temp))finalJoinCombinations.add(temp);
+        });
+
+        // TODO : there is a chance where there will be one combination with two joins and another with three or more
+        //  this case should be studied and removed
 
         // generate all joins diversities
-        combinedJoins.forEach(s ->{
+        finalJoinCombinations.forEach(s ->{
             // initialize diversities list for this join
             List<String> diversities = new ArrayList<>();
             // extract rows from max wires list connecting to this join on both ends
@@ -113,7 +143,6 @@ public class SpliceMaxWireList {
             });
         });
 
-
         // name the column which contains the join Diversities
         table.getRow(0).addValue("Join Diversity");
 
@@ -137,8 +166,9 @@ public class SpliceMaxWireList {
             List<String> twistJoins = extractTwistJoins(twistRows,toSourcePosition,fromSourcePosition);
             // get the combination of joins for those joins
             List<String> twistJoinsCombined = new ArrayList<>();
-            twistJoins.forEach(twistJoin -> combinedJoins.forEach(combinedJoin->{
-                if(combinedJoin.contains(twistJoin) && !twistJoinsCombined.contains(combinedJoin))twistJoinsCombined.add(combinedJoin);
+            twistJoins.forEach(twistJoin ->
+                    finalJoinCombinations.forEach(combinedJoin->{
+                        if(combinedJoin.contains(twistJoin) && !twistJoinsCombined.contains(combinedJoin))twistJoinsCombined.add(combinedJoin);
             }));
             // if there are joins connected to this twist
             if(twistJoinsCombined.size()>0){
