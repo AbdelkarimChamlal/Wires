@@ -9,7 +9,9 @@ import v3.utils.JavaUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpliceMaxWireList {
     static String separateValue = " <-> ";
@@ -184,6 +186,37 @@ public class SpliceMaxWireList {
                 });
             }
         });
+
+        Map<String,String> doubleJoinsMap = new HashMap<>();
+
+        // include the double With in the join name
+        table.getRows().forEach(row ->{
+            if(!row.getValue(joinDiversity).equals("-")){
+                if(row.getValue(toCrimpingTypePosition).equalsIgnoreCase("double")){
+                    List<String> temp  = new ArrayList<>();
+                    temp.add(row.getValue(wireKeyPosition));
+                    temp.add(row.getValue(toCrimpingDoublePosition));
+                    String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
+                    doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
+                }
+                if(row.getValue(fromCrimpingTypePosition).equalsIgnoreCase("double")){
+                    List<String> temp  = new ArrayList<>();
+                    temp.add(row.getValue(wireKeyPosition));
+                    temp.add(row.getValue(fromCrimpingDoublePosition));
+                    String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
+                    doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
+                }
+            }
+        });
+
+        // update rows with doubleJoins
+        table.getRows().forEach(row->{
+            if(!row.getValue(joinDiversity).equals("-") && doubleJoinsMap.containsKey(row.getValue(joinDiversity))){
+                row.getValues().set(joinDiversity,doubleJoinsMap.get(row.getValue(joinDiversity)));
+            }
+        });
+
+
     }
 
     public void exportSplicedTable(String filePath,String sheetName) throws IOException {
