@@ -78,8 +78,6 @@ public class SpliceMaxWireList {
             if (!combinedJoins.contains(finalCombination))combinedJoins.add(finalCombination);
         });
 
-        System.out.println(combinedJoins);
-
 
         // generate all joins diversities
         combinedJoins.forEach(s ->{
@@ -122,24 +120,8 @@ public class SpliceMaxWireList {
         // get its index
         int joinDiversity = table.getRow(0).getValues().indexOf("Join Diversity");
 
-
-
-
         // finalCombination
         List<String> finalCombinations = new ArrayList<>();
-
-
-//        // replace the joins with their combined name
-//        table.getRows().forEach(row -> {
-//
-//            String[] diversityParts = row.getValue(joinDiversity).split(separateValue);
-//            combinedJoins.forEach(combinedJoin->{
-//                if(combinedJoin.contains(diversityParts[0])){
-//                    row.getValues().set(joinDiversity,combinedJoin +separateValue+diversityParts[1]);
-//                }
-//            });
-//
-//        });
 
         // extract twisted wires
         List<Row> twistedWires = getTwistedWires(table.getRows(),wireTypePosition);
