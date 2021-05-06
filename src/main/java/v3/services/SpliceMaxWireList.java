@@ -81,7 +81,6 @@ public class SpliceMaxWireList {
                     String[] combinationJoins2 = combined2.split(" - ");
                     boolean foundCommon = false;
 
-
                     for (String combinationJoin : combinationJoins) {
                         for (String s : combinationJoins2) {
                             if (combinationJoin.equals(s)) {
@@ -105,9 +104,6 @@ public class SpliceMaxWireList {
             String temp = JavaUtil.sortAndConcatWithValue(finalCombination," - ");
             if (!finalJoinCombinations.contains(temp))finalJoinCombinations.add(temp);
         });
-
-        // TODO : there is a chance where there will be one combination with two joins and another with three or more
-        //  this case should be studied and removed
 
         // generate all joins diversities
         finalJoinCombinations.forEach(s ->{
