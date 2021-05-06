@@ -9,6 +9,7 @@ import v3.utils.JavaUtil;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SpliceMaxWireList {
     static String separateValue = " <-> ";
@@ -80,6 +81,7 @@ public class SpliceMaxWireList {
                 if(!combined.equals(combined2)){
                     String[] combinationJoins2 = combined2.split(" - ");
                     boolean foundCommon = false;
+
 
                     for (String combinationJoin : combinationJoins) {
                         for (String s : combinationJoins2) {
@@ -189,35 +191,6 @@ public class SpliceMaxWireList {
 
         });
 
-        Map<String,String> doubleJoinsMap = new HashMap<>();
-
-        // include the double With in the join name
-        table.getRows().forEach(row ->{
-
-            if(row.getValue(toCrimpingTypePosition).equalsIgnoreCase("double")){
-                List<String> temp  = new ArrayList<>();
-                temp.add(row.getValue(wireKeyPosition));
-                temp.add(row.getValue(toCrimpingDoublePosition));
-                String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
-                doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
-            }
-            if(row.getValue(fromCrimpingTypePosition).equalsIgnoreCase("double")){
-                List<String> temp  = new ArrayList<>();
-                temp.add(row.getValue(wireKeyPosition));
-                temp.add(row.getValue(fromCrimpingDoublePosition));
-                String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"//");
-                doubleJoinsMap.put(row.getValue(joinDiversity),row.getValue(joinDiversity).replace(row.getValue(wireKeyPosition),doubleJoinDiversity));
-            }
-
-        });
-
-        // update rows with doubleJoins
-        table.getRows().forEach(row->{
-            if(doubleJoinsMap.containsKey(row.getValue(joinDiversity))){
-                row.getValues().set(joinDiversity,doubleJoinsMap.get(row.getValue(joinDiversity)));
-            }
-        });
-
         // add the wires which are not connected to joins
         maxTable.getMaxRows().forEach(maxRow -> {
             // check if the source and destination are not connected to a Joint
@@ -228,10 +201,55 @@ public class SpliceMaxWireList {
                 row.setValues(maxRow.getValues());
                 // set the value of the joint diversity to -
                 row.addValue("-");
+//                // set the value of the joint doubles to -
+//                row.addValue("-");
                 // add row the final table
                 table.addRow(row);
             }
         });
+
+//        Map<String,String> doubleJoinsMap = new HashMap<>();
+        table.getRow(0).getValues().add("Doubles");
+
+
+        // include the double With in the join name
+        table.getRows().forEach(row ->{
+            List<String> rowDoubles = new ArrayList<>();
+            if(row.getValue(toCrimpingTypePosition).equalsIgnoreCase("double")){
+                List<String> temp  = new ArrayList<>();
+                temp.add(row.getValue(wireKeyPosition));
+                temp.add(row.getValue(toCrimpingDoublePosition));
+                String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"/");
+//                doubleJoinsMap.put(row.getValue(joinDiversity),doubleJoinDiversity);
+                rowDoubles.add(doubleJoinDiversity);
+            }
+
+            if(row.getValue(fromCrimpingTypePosition).equalsIgnoreCase("double")){
+                List<String> temp  = new ArrayList<>();
+                temp.add(row.getValue(wireKeyPosition));
+                temp.add(row.getValue(fromCrimpingDoublePosition));
+                String doubleJoinDiversity = JavaUtil.sortAndConcatWithValue(temp,"/");
+//                doubleJoinsMap.put(row.getValue(joinDiversity),doubleJoinDiversity);
+                rowDoubles.add(doubleJoinDiversity);
+            }
+            if(rowDoubles.size()>0){
+                row.getValues().add(JavaUtil.sortAndConcatWithValue(rowDoubles," + "));
+            }
+        });
+
+
+//        final int[] rowCount = {0};
+//
+//        // update rows with doubleJoins
+//        table.getRows().forEach(row->{
+//            if(rowCount[0] !=0){
+//                row.getValues().add(doubleJoinsMap.getOrDefault(row.getValue(joinDiversity), "-"));
+//            }else{
+//                rowCount[0] =1;
+//            }
+//        });
+
+
     }
 
 
