@@ -1,22 +1,13 @@
 package v3;
 
-import org.apache.commons.math3.analysis.function.Max;
 import v3.data.ConvertData;
-import v3.data.ExportData;
 import v3.data.ImportData;
 import v3.data.ImportValues;
 import v3.interfaces.Table;
 import v3.models.*;
-import v3.services.SpliceMaxWireList;
-import v3.standards.Row;
-import v3.utils.JavaUtil;
+import v3.services.PaxSplicer;
 import v3.utils.TableUtil;
 import v3.utils.TemplateUtil;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class TestingArea {
@@ -90,9 +81,9 @@ public class TestingArea {
 //            }
 //        }
 
-        SpliceMaxWireList spliceMaxWireList = new SpliceMaxWireList(maxTable);
-        spliceMaxWireList.splice();
-        spliceMaxWireList.exportSplicedTable("results/splicedList.xlsx","spliced");
+        PaxSplicer paxSplicer = new PaxSplicer(maxTable);
+        paxSplicer.splice();
+        paxSplicer.exportSplicedTable("results/splicedList.xlsx","spliced");
     }
 
 

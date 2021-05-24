@@ -11,12 +11,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SpliceMaxWireList {
+public class PaxSplicer {
     static String separateValue = " <-> ";
     MaxTable maxTable;
     Table table;
 
-    public SpliceMaxWireList(MaxTable maxTable) {
+    public PaxSplicer(MaxTable maxTable) {
         this.maxTable = maxTable;
         this.table = new Table();
         table.addRow(maxTable.getRows().get(0));
