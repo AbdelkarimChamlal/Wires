@@ -6,4 +6,5 @@ public class ImportValues {
     public static String TEMPLATE_FOLDER = "templates/";
     public static String DATA_FOLDER = "data/";
     public static String RESULT_FOLDER = "results/";
+    public static String TESTING_DATA = "testingData/";
 }

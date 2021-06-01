@@ -3,47 +3,52 @@ package v3;
 import v3.data.ConvertData;
 import v3.data.ImportData;
 import v3.data.ImportValues;
-import v3.interfaces.Table;
 import v3.models.*;
 import v3.services.PaxSplicer;
+import v3.services.SplicesGenerator;
+import v3.standards.Table;
 import v3.utils.TableUtil;
 import v3.utils.TemplateUtil;
 
 
 public class TestingArea {
-    static String maxFileName = "splice.xlsx";
+    static String maxFileName = "maxWireList.xlsx";
+    static String spliceKSK = "spliceKSK.xlsx";
 
     static String crimpingFileName = "crimping.xlsx";
     static String crimpingConfigFileName = "crimping.conf";
     static String maxConfigFileName = "maxWireList.conf";
+    static String spliceKSKConfigFileName = "spliceKSK.conf";
+    static String FMCRelationsConfigFileName = "FMCRelations.conf";
     static String maxTemplateName = "maxTemplate.xlsx";
     static String crimpingTemplateName = "crimping.xlsx";
     static String plausibilityFileName = "plausibility.xlsm";
     static String plausibilityConfigsFileName = "plausibility.conf";
     static String resultName = "maxResult.xlsx";
     static String separateValue = " <-> ";
+    static String testingFolder = "testingData";
 
     public static void main(String[] args) throws Exception {
 
         // first step is to load the configs
-        Configs maxConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+maxConfigFileName));
+//        Configs maxConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+maxConfigFileName));
 //        Configs crimpingConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+crimpingConfigFileName));
 //        Configs plausibilityConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+plausibilityConfigsFileName));
 
         // load templates
-        Template maxTemplate = TemplateUtil.loadTemplate(ImportValues.TEMPLATE_FOLDER+maxTemplateName,0);
+//        Template maxTemplate = TemplateUtil.loadTemplate(ImportValues.TEMPLATE_FOLDER+maxTemplateName,0);
 //        Template crimpingTemplate = TemplateUtil.loadTemplate(ImportValues.TEMPLATE_FOLDER+crimpingTemplateName,0);
 
         // initialize variables for Tables
-        Table maxT,plausibilityT,crimpingT;
+//        Table maxT,plausibilityT,crimpingT;
 
         // try to import Tables using the configurations provided in the table configuration
-        maxT = TableUtil.importTableUsingConfigurations(ImportValues.UPLOAD_FOLDER+maxFileName,maxConfigs,"MAX WIRE LIST");
+//        maxT = TableUtil.importTableUsingConfigurations(ImportValues.UPLOAD_FOLDER+maxFileName,maxConfigs,"MAX WIRE LIST");
 //        crimpingT = TableUtil.importTableUsingConfigurations(ImportValues.UPLOAD_FOLDER+crimpingFileName,crimpingConfigs,"CRIMPING REPORT");
 //        plausibilityT = TableUtil.importTableUsingConfigurations(ImportValues.UPLOAD_FOLDER+plausibilityFileName,plausibilityConfigs,"PLAUSIBILITY");
 
         // initialize customized tables for each table
-        MaxTable maxTable = new MaxTable(maxConfigs,maxTemplate,maxT);
+//        MaxTable maxTable = new MaxTable(maxConfigs,maxTemplate,maxT);
 //        CrimpingTable crimpingTable = new CrimpingTable(crimpingConfigs,crimpingTemplate,crimpingT);
 //
 //        // FIXME : for the moment being plausibility table takes some extra steps to be converted
@@ -80,10 +85,32 @@ public class TestingArea {
 //                }
 //            }
 //        }
+//
+//        PaxSplicer paxSplicer = new PaxSplicer(maxTable);
+//        paxSplicer.splice();
+//        paxSplicer.exportSplicedTable("results/splicedList.xlsx","spliced");
 
-        PaxSplicer paxSplicer = new PaxSplicer(maxTable);
-        paxSplicer.splice();
-        paxSplicer.exportSplicedTable("results/splicedList.xlsx","spliced");
+
+
+
+
+        Configs spliceKSKConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+spliceKSKConfigFileName));
+        Configs FMCRelationsConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+FMCRelationsConfigFileName));
+        Configs maxConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+maxConfigFileName));
+
+        Template maxTemplate = TemplateUtil.loadTemplate(ImportValues.TEMPLATE_FOLDER+maxTemplateName,0);
+
+
+
+        MaxTable maxTable = new MaxTable(maxConfigs,maxTemplate,TableUtil.importTableUsingConfigurations(ImportValues.TESTING_DATA+maxFileName,maxConfigs,"MAX WIRE LIST"));
+
+        Table spliceKSKTable = TableUtil.importTableUsingConfigurations(ImportValues.TESTING_DATA+spliceKSK,spliceKSKConfigs,"SPLICE KSK");
+        Table FMCRelationsTable = TableUtil.importTableUsingConfigurations(ImportValues.TESTING_DATA+spliceKSK,FMCRelationsConfigs,"FMC Relations");
+
+        SplicesGenerator splicesGenerator = new SplicesGenerator(maxTable,spliceKSKTable,spliceKSKConfigs,FMCRelationsTable);
+
+        splicesGenerator.generateDiversities();
+        splicesGenerator.exportSplicedOutput("results/splicedKSK.xlsx","splices");
     }
 
 

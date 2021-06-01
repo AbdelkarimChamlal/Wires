@@ -5,10 +5,10 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import v3.models.Configs;
-import v3.interfaces.Table;
 import v3.models.CrimpingRow;
 import v3.models.MaxRow;
 import v3.models.Revision;
+import v3.standards.Table;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,7 +26,7 @@ public class ConvertData {
      * @return a 2D array in table format
      */
     public static Table convertSheetIntoTable(Sheet sheet){
-        Table table = new v3.standards.Table();
+        Table table = new Table();
         Iterator<Row> rowIterator = sheet.rowIterator();
         while(rowIterator.hasNext()){
             Row row = rowIterator.next();

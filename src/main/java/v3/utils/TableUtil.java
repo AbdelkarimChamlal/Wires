@@ -80,9 +80,9 @@ public class TableUtil {
         return duplicatedTable;
     }
 
-    public static v3.interfaces.Table importTableUsingConfigurations(String filePath, Configs configs,String tableName) throws Exception {
+    public static Table importTableUsingConfigurations(String filePath, Configs configs,String tableName) throws Exception {
         try{
-            v3.interfaces.Table table;
+            Table table;
             if(configs.getConfigValue("importBy").equals("ORDER")){
                 table = ConvertData.convertSheetIntoTable(ImportData.importSheet(filePath,Integer.parseInt(configs.getConfigValue("importByValue"))));
             }else{
