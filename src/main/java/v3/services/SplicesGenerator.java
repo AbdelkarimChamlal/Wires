@@ -27,6 +27,7 @@ public class SplicesGenerator {
         this.spliceKSKConfigs = spliceKSKConfigs;
         this.spliceDiversities = extractSpliceDiversities(spliceKSK,spliceKSKConfigs);
         updateSpliceFromExternNameToInternName();
+        combineJoinsForTheSameTwist();
         this.spliceOutput = prepareSpliceOutput();
     }
 
@@ -37,7 +38,7 @@ public class SplicesGenerator {
             wireList.forEach(wire->{
                 Row row = new Row();
                 row.addValue(diversity.getInternName());
-                row.addValue(diversity.getInternName() + " - " + diversity.getMatrix());
+                row.addValue(diversity.getInternName() + " ~ " + diversity.getMatrix());
                 row.addValue(diversity.getMatrix());
                 row.addValue(wire);
                 row.addValue((diversity.getWiresAtLeft().contains(wire))?"L":"R");
@@ -63,6 +64,51 @@ public class SplicesGenerator {
                 }
             });
         });
+    }
+
+    void combineJoinsForTheSameTwist(){
+        // extract unique twists (unique wire special wires values)
+        List<String> uniqueTwists = new ArrayList<>();
+        maxTable.getRows().forEach(row->{
+            if(row.getValues().get(maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("wireType"))).equalsIgnoreCase("Twisted Wire")){
+                String twist = row.getValues().get(maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("wireSpecialWire")));
+                if(!uniqueTwists.contains(twist))uniqueTwists.add(twist);
+            }
+        });
+
+        // extract different joins that are connected to the same twist
+        List<String> joinsWithSameTwist = new ArrayList<>();
+        uniqueTwists.forEach(uniqueTwist->{
+            List<String> joins = new ArrayList<>();
+            maxTable.getRows().forEach(row->{
+                String twist = row.getValues().get(maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("wireSpecialWire")));
+                if(twist.equals(uniqueTwist)){
+                    String fromSource = row.getValues().get(maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("fromSource")));
+                    String toSource = row.getValues().get(maxTable.getColumns().indexOf(maxTable.getMaxConfigs().getConfigValue("toSource")));
+                    if((fromSource.startsWith("J") || fromSource.startsWith("j")) && !joins.contains(fromSource) ) {
+                        joins.add(fromSource);
+                    }
+                    if((toSource.startsWith("J") || toSource.startsWith("j")) && !joins.contains(toSource) ) {
+                        joins.add(toSource);
+                    }
+                }
+
+            });
+            if(joins.size()>0){
+                String joinsCombined = JavaUtil.sortAndConcatWithValue(joins,"-");
+                if(!joinsWithSameTwist.contains(joinsCombined))joinsWithSameTwist.add(joinsCombined);
+            }
+        });
+
+        // change the join name in each diversity to the combined joins
+        joinsWithSameTwist.forEach(combinedJoins ->{
+            spliceDiversities.forEach(spliceDiversity -> {
+                if(combinedJoins.contains(spliceDiversity.getInternName())){
+                    spliceDiversity.setInternName(combinedJoins);
+                }
+            });
+        });
+
     }
 
 
