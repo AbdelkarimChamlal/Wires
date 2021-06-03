@@ -33,7 +33,14 @@ public class SplicesGenerator {
 
     public void generateDiversities(){
         spliceDiversities.forEach(diversity ->{
-            String wires = diversity.getWiresAtLeft() + ":" + diversity.getWiresAtRight();
+            String wires;
+            if(diversity.getWiresAtLeft().length() == 0){
+                wires = diversity.getWiresAtRight();
+            }else if(diversity.getWiresAtRight().length() == 0){
+                wires = diversity.getWiresAtLeft();
+            }else{
+                wires = diversity.getWiresAtLeft() + ":" + diversity.getWiresAtRight();
+            }
             List<String> wireList = JavaUtil.convertArrayToList(wires.split(":"));
             wireList.forEach(wire->{
                 Row row = new Row();
@@ -110,7 +117,6 @@ public class SplicesGenerator {
         });
 
     }
-
 
 
     Table prepareSpliceOutput(){
