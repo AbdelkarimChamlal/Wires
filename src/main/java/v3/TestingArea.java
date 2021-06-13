@@ -12,11 +12,13 @@ import v3.utils.TemplateUtil;
 
 
 public class TestingArea {
-    static String maxFileName = "maxWireList.xlsx";
+    static String maxFileName = "max wire list with data.xlsx";
     static String spliceKSK = "spliceKSK.xlsx";
 
-    static String crimpingFileName = "crimping.xlsx";
+    static String crimpingFileName = "crimpingReport.xlsx";
     static String crimpingConfigFileName = "crimping.conf";
+
+
     static String maxConfigFileName = "maxWireList.conf";
     static String spliceKSKConfigFileName = "spliceKSK.conf";
     static String FMCRelationsConfigFileName = "FMCRelations.conf";
@@ -97,20 +99,22 @@ public class TestingArea {
         Configs spliceKSKConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+spliceKSKConfigFileName));
         Configs FMCRelationsConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+FMCRelationsConfigFileName));
         Configs maxConfigs = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+maxConfigFileName));
+        Configs crimpingConfig = ConvertData.convertStringToConfigs(ImportData.importText(ImportValues.CONFIG_FOLDER+crimpingConfigFileName));
 
         Template maxTemplate = TemplateUtil.loadTemplate(ImportValues.TEMPLATE_FOLDER+maxTemplateName,0);
-
+        Template crimpingTemplate = TemplateUtil.loadTemplate(ImportValues.TEMPLATE_FOLDER+crimpingTemplateName,0);
 
 
         MaxTable maxTable = new MaxTable(maxConfigs,maxTemplate,TableUtil.importTableUsingConfigurations(ImportValues.TESTING_DATA+maxFileName,maxConfigs,"MAX WIRE LIST"));
+        CrimpingTable crimpingTable = new CrimpingTable(crimpingConfig,crimpingTemplate,TableUtil.importTableUsingConfigurations(ImportValues.TESTING_DATA+crimpingFileName,crimpingConfig,"MAX WIRE LIST"));
 
         Table spliceKSKTable = TableUtil.importTableUsingConfigurations(ImportValues.TESTING_DATA+spliceKSK,spliceKSKConfigs,"SPLICE KSK");
         Table FMCRelationsTable = TableUtil.importTableUsingConfigurations(ImportValues.TESTING_DATA+spliceKSK,FMCRelationsConfigs,"FMC Relations");
 
-        SplicesGenerator splicesGenerator = new SplicesGenerator(maxTable,spliceKSKTable,spliceKSKConfigs,FMCRelationsTable);
+        SplicesGenerator splicesGenerator = new SplicesGenerator(maxTable,crimpingTable,spliceKSKTable,spliceKSKConfigs,FMCRelationsTable);
 
         splicesGenerator.generateDiversities();
-        splicesGenerator.exportSplicedOutput("results/splicedKSK.xlsx","splices");
+        splicesGenerator.exportSplicedOutput("results/splicedKSKNew.xlsx","splices");
     }
 
 
